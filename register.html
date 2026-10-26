@@ -89,6 +89,7 @@
 
     [hidden] { display: none !important; }
   </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -168,171 +169,147 @@
   </main>
 
   <script type="module">
-    import { createClient } from
-      "https://esm.sh/@supabase/supabase-js@2";
+"use strict";
 
-    const SUPABASE_URL =
-      "https://mlhveuqfxbpucorktost.supabase.co";
+const SUPABASE_URL =
+  "https://mlhveuqfxbpucorktost.supabase.co";
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
+const SUPABASE_KEY =
+  "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
 
-    const supabase = createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-    const $ = id => document.getElementById(id);
+const registerSection =
+  document.getElementById("registerSection");
 
-    const registerSection = $("registerSection");
-    const loginSection = $("loginSection");
-    const otpSection = $("otpSection");
-    const message = $("message");
+const loginSection =
+  document.getElementById("loginSection");
 
-    let currentPhone = "";
-    let currentMode = "register";
+const message = document.getElementById("message");
 
-    function showMessage(text) {
-      message.textContent = text;
-    }
+const registerForm =
+  document.getElementById("registerForm");
 
-    function showSection(section) {
-      registerSection.hidden = section !== registerSection;
-      loginSection.hidden = section !== loginSection;
-      otpSection.hidden = section !== otpSection;
-    }
+const loginForm =
+  document.getElementById("loginForm");
 
-    function setBusy(button, busy, text) {
-      button.disabled = busy;
-      if (busy) button.textContent = text;
-    }
+document.getElementById("showLogin").onclick = function () {
+  registerSection.hidden = true;
+  loginSection.hidden = false;
+  message.textContent = "";
+};
 
-    $("showLogin").addEventListener("click", () => {
-      showSection(loginSection);
-      showMessage("");
+document.getElementById("showRegister").onclick = function () {
+  loginSection.hidden = true;
+  registerSection.hidden = false;
+  message.textContent = "";
+};
+
+// REGISTER
+registerForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  if (!registerForm.reportValidity()) return;
+
+  const name = document.getElementById("regName").value.trim();
+  const phone = document.getElementById("regPhone").value.trim();
+  const password =
+    document.getElementById("regPassword").value;
+
+  const button = document.getElementById("registerBtn");
+  button.disabled = true;
+  message.textContent = "Creating account...";
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      phone: phone,
+      password: password,
+      options: {
+        data: {
+          full_name: name
+        }
+      }
     });
 
-    $("showRegister").addEventListener("click", () => {
-      showSection(registerSection);
-      showMessage("");
-    });
+    if (error) throw error;
 
-    $("backBtn").addEventListener("click", () => {
-      showSection(
-        currentMode === "register"
-          ? registerSection
-          : loginSection
+    // If phone verification is enabled, request the SMS OTP.
+    if (data.user && !data.session) {
+      const otp = prompt(
+        "Enter the verification code sent to your phone:"
       );
-      showMessage("");
-    });
 
-    async function sendOTP(phone, mode, name = "") {
-      currentPhone = phone;
-      currentMode = mode;
+      if (!otp) {
+        message.textContent =
+          "Account created. Verify your phone before logging in.";
+        return;
+      }
 
-      const options = mode === "register"
-        ? {
-            shouldCreateUser: true,
-            data: { full_name: name }
-          }
-        : {
-            shouldCreateUser: false
-          };
+      const { error: verifyError } =
+        await supabase.auth.verifyOtp({
+          phone: phone,
+          token: otp.trim(),
+          type: "sms"
+        });
 
-      const { error } = await supabase.auth.signInWithOtp({
-        phone,
-        options
+      if (verifyError) throw verifyError;
+    }
+
+    message.textContent =
+      "Registration successful! You can now log in.";
+
+    document.getElementById("loginPhone").value = phone;
+    document.getElementById("loginPassword").value = "";
+
+    registerForm.reset();
+    registerSection.hidden = true;
+    loginSection.hidden = false;
+
+  } catch (error) {
+    message.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+// LOGIN
+loginForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  if (!loginForm.reportValidity()) return;
+
+  const phone = document.getElementById("loginPhone").value.trim();
+  const password =
+    document.getElementById("loginPassword").value;
+
+  const button = document.getElementById("loginBtn");
+  button.disabled = true;
+  message.textContent = "Logging in...";
+
+  try {
+    const { data, error } =
+      await supabase.auth.signInWithPassword({
+        phone: phone,
+        password: password
       });
 
-      if (error) throw error;
+    if (error) throw error;
 
-      showSection(otpSection);
-      showMessage(
-        "OTP request sent. Check your phone for the code."
-      );
-    }
+    message.textContent = "Login successful!";
 
-    $("registerForm").addEventListener("submit", async event => {
-      event.preventDefault();
+    window.location.href = "index.html";
 
-      if (!event.currentTarget.reportValidity()) return;
+  } catch (error) {
+    message.textContent =
+      error.message || "Login failed. Please try again.";
+  } finally {
+    button.disabled = false;
+  }
+});
 
-      const name = $("regName").value.trim();
-      const phone = $("regPhone").value.trim();
-      const button = $("registerBtn");
-
-      setBusy(button, true, "Sending OTP...");
-      showMessage("Please wait...");
-
-      try {
-        await sendOTP(phone, "register", name);
-      } catch (error) {
-        showMessage("Signup error: " + error.message);
-      } finally {
-        setBusy(button, false, "Send OTP & Register");
-      }
-    });
-
-    $("loginForm").addEventListener("submit", async event => {
-      event.preventDefault();
-
-      if (!event.currentTarget.reportValidity()) return;
-
-      const phone = $("loginPhone").value.trim();
-      const button = $("loginBtn");
-
-      setBusy(button, true, "Sending OTP...");
-      showMessage("Please wait...");
-
-      try {
-        await sendOTP(phone, "login");
-      } catch (error) {
-        showMessage("Login error: " + error.message);
-      } finally {
-        setBusy(button, false, "Send Login OTP");
-      }
-    });
-
-    $("otpForm").addEventListener("submit", async event => {
-      event.preventDefault();
-
-      if (!event.currentTarget.reportValidity()) return;
-
-      const token = $("otp").value.trim();
-      const button = $("verifyBtn");
-
-      setBusy(button, true, "Verifying...");
-      showMessage("Verifying OTP...");
-
-      try {
-        const { data, error } =
-          await supabase.auth.verifyOtp({
-            phone: currentPhone,
-            token,
-            type: "sms"
-          });
-
-        if (error) throw error;
-        if (!data.session) {
-          throw new Error("No login session received. Try again.");
-        }
-
-        showMessage("Verification successful! Opening BookNest...");
-        window.location.replace("./index.html");
-      } catch (error) {
-        showMessage("Verification error: " + error.message);
-      } finally {
-        setBusy(button, false, "Verify & Continue");
-      }
-    });
-
-    // Restore the user's saved session when this page opens.
-    const { data: { session } } =
-      await supabase.auth.getSession();
-
-    if (session) {
-      window.location.replace("./index.html");
-    }
   </script>
 </body>
 </html>
