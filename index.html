@@ -219,7 +219,7 @@
       </a>
 
       <a href="register.html" class="register-btn" id="registerLink">
-        Register
+        Sign Up
       </a>
 
       <a href="profile.html" class="profile-btn" id="profileLink" hidden>
@@ -238,101 +238,90 @@
     <p>Online Book Store</p>
   </section>
 
+  <!-- Supabase JavaScript library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
     "use strict";
 
+    // Supabase project connection
+    const SUPABASE_URL =
+      "https://mlhveuqfxbpucorktost.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    // Navigation elements
     const loginLink = document.getElementById("loginLink");
     const registerLink = document.getElementById("registerLink");
     const profileLink = document.getElementById("profileLink");
     const logoutLink = document.getElementById("logoutLink");
 
-    // Check the current login session.
-    async function updateNavbar() {
+    // Show navigation based on authentication status
+    function updateNavbar(isLoggedIn) {
+      loginLink.hidden = isLoggedIn;
+      registerLink.hidden = isLoggedIn;
+      profileLink.hidden = !isLoggedIn;
+      logoutLink.hidden = !isLoggedIn;
+    }
+
+    // Check the current Supabase session
+    async function checkLoginStatus() {
       try {
-        const response = await fetch("/api/me", {
-          method: "GET",
-          credentials: "same-origin",
-          headers: {
-            "Accept": "application/json"
-          },
-          cache: "no-store"
-        });
+        const { data, error } =
+          await supabaseClient.auth.getSession();
 
-        if (!response.ok) {
-          showLoggedOutNavbar();
-          return;
+        if (error) {
+          throw error;
         }
 
-        const data = await response.json();
-
-        // Supports common response formats:
-        // { user: {...} } or { loggedIn: true, user: {...} }
-        const user = data.user || data;
-        const loggedIn =
-          Boolean(data.user) ||
-          data.loggedIn === true;
-
-        if (loggedIn) {
-          showLoggedInNavbar();
-        } else {
-          showLoggedOutNavbar();
-        }
+        updateNavbar(Boolean(data.session));
 
       } catch (error) {
-        console.error("Unable to check login status:", error);
-
-        // If the server cannot be reached, do not pretend the user
-        // is logged in.
-        showLoggedOutNavbar();
+        console.error("Unable to check login status:", error.message);
+        updateNavbar(false);
       }
     }
 
-    function showLoggedInNavbar() {
-      loginLink.hidden = true;
-      registerLink.hidden = true;
-      profileLink.hidden = false;
-      logoutLink.hidden = false;
-    }
+    // Listen for login, logout, and other auth changes
+    supabaseClient.auth.onAuthStateChange(
+      (event, session) => {
+        updateNavbar(Boolean(session));
+      }
+    );
 
-    function showLoggedOutNavbar() {
-      loginLink.hidden = false;
-      registerLink.hidden = false;
-      profileLink.hidden = true;
-      logoutLink.hidden = true;
-    }
-
-    // Log out the current user.
+    // Logout the current user
     logoutLink.addEventListener("click", async function(event) {
       event.preventDefault();
 
       logoutLink.style.pointerEvents = "none";
 
       try {
-        const response = await fetch("/api/logout", {
-          method: "POST",
-          credentials: "same-origin",
-          headers: {
-            "Accept": "application/json"
-          }
-        });
+        const { error } =
+          await supabaseClient.auth.signOut();
 
-        if (!response.ok) {
-          alert("Logout failed. Please try again.");
-          return;
+        if (error) {
+          throw error;
         }
 
-        window.location.replace("login.html");
+        updateNavbar(false);
+        window.location.href = "index.html";
 
       } catch (error) {
-        console.error("Logout error:", error);
-        alert("Unable to connect to the server. Check whether it is running.");
+        console.error("Logout failed:", error.message);
+        alert("Logout failed. Please try again.");
       } finally {
         logoutLink.style.pointerEvents = "";
       }
     });
 
-    // Run when the home page opens.
-    updateNavbar();
+    // Run when the homepage opens
+    checkLoginStatus();
   </script>
 </body>
 </html>
