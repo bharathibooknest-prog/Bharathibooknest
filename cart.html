@@ -7,13 +7,9 @@
   <title>BharathiBookNest - My Cart</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    [hidden] {
-      display: none !important;
-    }
+    [hidden] { display: none !important; }
 
     body {
       margin: 0;
@@ -52,10 +48,7 @@
       object-fit: contain;
     }
 
-    .brand h1 {
-      font-size: 24px;
-      margin: 0;
-    }
+    .brand h1 { font-size: 24px; margin: 0; }
 
     nav, .auth-buttons {
       display: flex;
@@ -88,25 +81,14 @@
       font-size: 14px;
     }
 
-    .login-btn {
-      background: #fff8ef;
-      color: #713d2b;
-    }
+    .login-btn { background: #fff8ef; color: #713d2b; }
+    .register-btn { background: #713d2b; color: white; }
+    .profile-btn { background: #315b42; color: white; }
+    .logout-btn { background: #a33b32; color: white; }
 
-    .register-btn {
-      background: #713d2b;
-      color: white;
-    }
-
-    .profile-btn {
-      background: #315b42;
-      color: white;
-    }
-
-    .logout-btn {
-      background: #a33b32;
-      color: white;
-    }
+    /* Hide authentication controls until session check finishes. */
+    .auth-buttons { visibility: hidden; }
+    .auth-buttons.ready { visibility: visible; }
 
     .cart-container {
       max-width: 1000px;
@@ -137,11 +119,7 @@
       border-radius: 8px;
     }
 
-    .book-details {
-      flex: 1;
-      min-width: 0;
-      text-align: left;
-    }
+    .book-details { flex: 1; min-width: 0; text-align: left; }
 
     .book-name {
       margin: 0 0 8px;
@@ -182,9 +160,7 @@
       font-weight: bold;
     }
 
-    .remove-btn:hover {
-      background: #7d2923;
-    }
+    .remove-btn:hover { background: #7d2923; }
 
     #empty {
       text-align: center;
@@ -224,28 +200,11 @@
       cursor: pointer;
     }
 
-    .continue-shopping {
-      background: #713d2b;
-      color: white;
-    }
-
-    .continue-shopping:hover {
-      background: #512b1f;
-    }
-
-    .checkout-btn {
-      background: #315b42;
-      color: white;
-    }
-
-    .checkout-btn:hover {
-      background: #23432f;
-    }
-
-    .checkout-btn:disabled {
-      background: #999;
-      cursor: not-allowed;
-    }
+    .continue-shopping { background: #713d2b; color: white; }
+    .continue-shopping:hover { background: #512b1f; }
+    .checkout-btn { background: #315b42; color: white; }
+    .checkout-btn:hover { background: #23432f; }
+    .checkout-btn:disabled { background: #999; cursor: not-allowed; }
 
     footer {
       margin-top: 40px;
@@ -255,32 +214,14 @@
       text-align: center;
     }
 
-    footer p {
-      margin: 5px;
-    }
+    footer p { margin: 5px; }
 
     @media (max-width: 700px) {
-      header {
-        flex-direction: column;
-        padding: 15px;
-      }
-
-      .brand img {
-        width: 50px;
-        height: 50px;
-      }
-
-      .brand h1 {
-        font-size: 21px;
-      }
-
-      nav {
-        gap: 14px;
-      }
-
-      .auth-buttons {
-        width: 100%;
-      }
+      header { flex-direction: column; padding: 15px; }
+      .brand img { width: 50px; height: 50px; }
+      .brand h1 { font-size: 21px; }
+      nav { gap: 14px; }
+      .auth-buttons { width: 100%; }
 
       .cart-container {
         margin: 20px 12px;
@@ -300,28 +241,16 @@
         flex-wrap: wrap;
       }
 
-      .book-price {
-        text-align: left;
-        min-width: 0;
-      }
+      .book-price { text-align: left; min-width: 0; }
+      #total { font-size: 20px; }
+      .cart-footer-actions { flex-direction: column; }
 
-      #total {
-        font-size: 20px;
-      }
-
-      .cart-footer-actions {
-        flex-direction: column;
-      }
-
-      .continue-shopping, .checkout-btn {
-        width: 100%;
-      }
+      .continue-shopping, .checkout-btn { width: 100%; }
     }
   </style>
 </head>
 
 <body>
-
   <header>
     <div class="brand">
       <img src="./booknest-logo.png" alt="BharathiBookNest Logo">
@@ -335,7 +264,7 @@
       <a href="#contact">Contact</a>
     </nav>
 
-    <div class="auth-buttons">
+    <div class="auth-buttons" id="authButtons">
       <a href="index.html" class="auth-btn login-btn" id="loginLink">
         Login
       </a>
@@ -358,7 +287,6 @@
 
   <main class="cart-container">
     <h2>🛒 My Cart</h2>
-
     <div id="cartItems"></div>
     <p id="empty">Your cart is empty.</p>
     <p id="total">Total: ₹0</p>
@@ -386,34 +314,58 @@
   <script>
     "use strict";
 
-    // SUPABASE CONFIGURATION
     const SUPABASE_URL =
       "https://mlhveuqfxbpucorktost.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
 
+    const authButtons = document.getElementById("authButtons");
+    const loginLink = document.getElementById("loginLink");
+    const registerLink = document.getElementById("registerLink");
+    const profileLink = document.getElementById("profileLink");
+    const logoutButton = document.getElementById("logoutButton");
+
     let supabaseClient = null;
 
-    // FIX: Do not compare the real key with itself.
-    // Initialize Supabase when the SDK and key are available.
-    if (
-      window.supabase &&
-      typeof window.supabase.createClient === "function" &&
-      SUPABASE_PUBLISHABLE_KEY
-    ) {
+    function updateNavbar(session) {
+      const loggedIn = Boolean(session && session.user);
+
+      loginLink.hidden = loggedIn;
+      registerLink.hidden = loggedIn;
+      profileLink.hidden = !loggedIn;
+      logoutButton.hidden = !loggedIn;
+
+      authButtons.classList.add("ready");
+    }
+
+    // Initialize the same Supabase project used by Home and Register.
+    function initializeSupabase() {
+      if (
+        !window.supabase ||
+        typeof window.supabase.createClient !== "function"
+      ) {
+        console.error("Supabase SDK did not load.");
+        updateNavbar(null);
+        return false;
+      }
+
       supabaseClient = window.supabase.createClient(
         SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        }
       );
-    } else {
-      console.error(
-        "Supabase SDK failed to load. Check your internet connection."
-      );
+
+      return true;
     }
 
     // CART FUNCTIONS
-
     function getCart() {
       try {
         const data = JSON.parse(
@@ -455,7 +407,6 @@
       container.replaceChildren();
 
       let total = 0;
-
       empty.hidden = cart.length > 0;
       checkoutBtn.disabled = cart.length === 0;
 
@@ -496,10 +447,7 @@
         removeButton.type = "button";
         removeButton.className = "remove-btn";
         removeButton.textContent = "Remove";
-
-        removeButton.addEventListener("click", function() {
-          removeBook(index);
-        });
+        removeButton.addEventListener("click", () => removeBook(index));
 
         actions.append(priceElement, removeButton);
         item.append(details, actions);
@@ -512,88 +460,64 @@
 
     function removeBook(index) {
       const cart = getCart();
-
       if (index < 0 || index >= cart.length) return;
 
       cart.splice(index, 1);
-
-      if (saveCart(cart)) {
-        displayCart();
-      }
+      if (saveCart(cart)) displayCart();
     }
 
-    // LOGIN NAVIGATION
+    // AUTH SESSION
+    async function initializeAuth() {
+      if (!initializeSupabase()) return;
 
-    function updateNavbar(session) {
-      const loggedIn = Boolean(session && session.user);
-
-      document.getElementById("loginLink").hidden = loggedIn;
-      document.getElementById("registerLink").hidden = loggedIn;
-      document.getElementById("profileLink").hidden = !loggedIn;
-      document.getElementById("logoutButton").hidden = !loggedIn;
-    }
-
-    async function initialiseAuth() {
-      if (!supabaseClient) {
-        updateNavbar(null);
-        return;
-      }
+      // Subscribe before reading the initial session.
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        updateNavbar(session);
+      });
 
       try {
         const { data, error } =
           await supabaseClient.auth.getSession();
 
         if (error) {
-          console.error("Unable to read login session:", error.message);
+          console.error("Session check failed:", error.message);
           updateNavbar(null);
           return;
         }
 
         updateNavbar(data.session);
-
-        supabaseClient.auth.onAuthStateChange(
-          function(event, session) {
-            updateNavbar(session);
-          }
-        );
       } catch (error) {
-        console.error("Authentication initialization failed:", error);
+        console.error("Could not initialize authentication:", error);
         updateNavbar(null);
       }
     }
 
     // LOGOUT
-    document.getElementById("logoutButton").addEventListener(
-      "click",
-      async function() {
-        if (!supabaseClient) {
-          alert("Login service is unavailable. Please try again later.");
+    logoutButton.addEventListener("click", async function() {
+      if (!supabaseClient) return;
+
+      logoutButton.disabled = true;
+      logoutButton.textContent = "Logging out...";
+
+      try {
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) {
+          console.error("Logout failed:", error.message);
+          alert("Logout failed. Please try again.");
+          logoutButton.disabled = false;
+          logoutButton.textContent = "Logout";
           return;
         }
 
-        this.disabled = true;
-        this.textContent = "Logging out...";
-
-        try {
-          const { error } = await supabaseClient.auth.signOut();
-
-          if (error) {
-            console.error("Logout failed:", error.message);
-            alert("Logout failed: " + error.message);
-            this.disabled = false;
-            this.textContent = "Logout";
-            return;
-          }
-
-          window.location.replace("index.html");
-        } catch (error) {
-          console.error("Logout failed:", error);
-          alert("Unable to log out. Please try again.");
-          this.disabled = false;
-          this.textContent = "Logout";
-        }
+        window.location.replace("index.html");
+      } catch (error) {
+        console.error("Logout failed:", error);
+        alert("Unable to log out. Please try again.");
+        logoutButton.disabled = false;
+        logoutButton.textContent = "Logout";
       }
-    );
+    });
 
     // CHECKOUT
     document.getElementById("checkoutBtn").addEventListener(
@@ -609,36 +533,27 @@
           return;
         }
 
-        try {
-          const { data, error } =
-            await supabaseClient.auth.getSession();
+        const { data, error } =
+          await supabaseClient.auth.getSession();
 
-          if (error || !data.session) {
-            alert("Please log in before checkout.");
-            window.location.href = "index.html";
-            return;
-          }
-
-          alert(
-            "You are logged in. Online order processing and payment have not been configured yet."
-          );
-        } catch (error) {
-          console.error("Checkout session check failed:", error);
-          alert("Unable to verify your login. Please try again.");
+        if (error || !data.session) {
+          alert("Please log in before checkout.");
+          window.location.href = "index.html";
+          return;
         }
+
+        alert(
+          "You are logged in. Online ordering and payment are not configured yet."
+        );
       }
     );
 
-    // INITIALIZE PAGE
     displayCart();
-    initialiseAuth();
+    initializeAuth();
 
-    window.addEventListener("storage", function(event) {
-      if (event.key === "booknestCart") {
-        displayCart();
-      }
+    window.addEventListener("storage", event => {
+      if (event.key === "booknestCart") displayCart();
     });
   </script>
-
 </body>
 </html>
