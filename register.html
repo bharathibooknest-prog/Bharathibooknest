@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Sign Up - BharathiBookNest</title>
+  <title>Sign Up | BharathiBookNest</title>
 
   <style>
     * {
@@ -16,19 +16,21 @@
       margin: 0;
       min-height: 100vh;
       font-family: Arial, sans-serif;
-      background:
-        linear-gradient(rgba(255, 248, 239, 0.82),
-                        rgba(255, 248, 239, 0.82)),
-        url("./bharathiyar-background.png") center / cover fixed;
       color: #30251f;
+      background:
+        linear-gradient(
+          rgba(255, 248, 239, 0.78),
+          rgba(255, 248, 239, 0.78)
+        ),
+        url("./bharathiyar-background.png") center / cover fixed;
       display: flex;
       flex-direction: column;
     }
 
     header {
       text-align: center;
-      padding: 18px;
-      background: rgba(255, 255, 255, 0.75);
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.8);
     }
 
     .logo {
@@ -40,13 +42,19 @@
     header h1 {
       margin: 5px 0;
       font-size: 26px;
+      color: #30251f;
+    }
+
+    header p {
+      margin: 5px 0;
     }
 
     nav {
       display: flex;
       justify-content: center;
+      align-items: center;
+      gap: 25px;
       flex-wrap: wrap;
-      gap: 22px;
       padding: 14px;
       background: #713d2b;
     }
@@ -64,39 +72,47 @@
     main {
       flex: 1;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 30px 15px;
+      align-items: center;
+      padding: 35px 15px;
     }
 
-    .signup-box {
+    .signup-card {
       width: 100%;
-      max-width: 430px;
+      max-width: 440px;
       padding: 30px;
       border-radius: 15px;
-      background: rgba(255, 255, 255, 0.96);
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
     }
 
-    .signup-box h2 {
-      text-align: center;
+    .signup-card h2 {
       margin-top: 0;
+      margin-bottom: 10px;
+      text-align: center;
       color: #713d2b;
     }
 
-    .subtitle {
+    .description {
+      margin-bottom: 25px;
       text-align: center;
       color: #666;
-      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
     }
 
     label {
       display: block;
-      margin: 14px 0 6px;
+      margin-bottom: 7px;
       font-weight: bold;
     }
 
-    input {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
       padding: 12px;
       border: 1px solid #ccc;
@@ -109,10 +125,26 @@
       border-color: #713d2b;
     }
 
+    .show-password {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      font-size: 14px;
+      font-weight: normal;
+      cursor: pointer;
+    }
+
+    .show-password input {
+      width: auto;
+      margin: 0;
+      cursor: pointer;
+    }
+
     button {
       width: 100%;
+      margin-top: 5px;
       padding: 13px;
-      margin-top: 22px;
       border: none;
       border-radius: 7px;
       background: #713d2b;
@@ -127,54 +159,57 @@
     }
 
     button:disabled {
-      opacity: 0.65;
+      opacity: 0.6;
       cursor: not-allowed;
     }
 
     #message {
       display: none;
       margin-top: 18px;
-      padding: 12px;
+      padding: 13px;
       border-radius: 7px;
-      line-height: 1.5;
       overflow-wrap: anywhere;
+      line-height: 1.5;
+      font-size: 14px;
     }
 
     #message.success {
       display: block;
-      color: #155724;
-      background: #d4edda;
+      background: #e2f5e8;
+      color: #185c2c;
+      border: 1px solid #b9dfc3;
     }
 
     #message.error {
       display: block;
-      color: #721c24;
-      background: #f8d7da;
+      background: #fde8e8;
+      color: #8b2020;
+      border: 1px solid #efc1c1;
     }
 
-    .login-text {
+    .login-link {
+      margin-top: 22px;
       text-align: center;
-      margin-top: 20px;
     }
 
-    .login-text a {
+    .login-link a {
       color: #713d2b;
       font-weight: bold;
     }
 
     footer {
-      text-align: center;
       padding: 15px;
+      text-align: center;
       background: rgba(255, 255, 255, 0.8);
     }
 
     @media (max-width: 480px) {
-      .signup-box {
+      .signup-card {
         padding: 22px;
       }
 
       nav {
-        gap: 14px;
+        gap: 16px;
       }
     }
   </style>
@@ -188,6 +223,7 @@
       alt="BharathiBookNest Logo"
       class="logo"
     >
+
     <h1>BharathiBookNest</h1>
     <p>Your Favourite Online Book Store</p>
   </header>
@@ -199,56 +235,72 @@
   </nav>
 
   <main>
-    <section class="signup-box">
+    <section class="signup-card">
+
       <h2>Create Your Account</h2>
 
-      <p class="subtitle">
-        Join BharathiBookNest and discover your next favourite book.
+      <p class="description">
+        Join BharathiBookNest and discover your favourite books.
       </p>
 
       <form id="signupForm">
 
-        <label for="fullName">Full Name</label>
-        <input
-          type="text"
-          id="fullName"
-          name="fullName"
-          placeholder="Enter your full name"
-          autocomplete="name"
-          required
-        >
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            placeholder="Enter your full name"
+            autocomplete="name"
+            required
+          >
+        </div>
 
-        <label for="email">Email Address</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="Enter your email address"
-          autocomplete="email"
-          required
-        >
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email address"
+            autocomplete="email"
+            required
+          >
+        </div>
 
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Create a password"
-          minlength="8"
-          autocomplete="new-password"
-          required
-        >
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a password"
+            minlength="8"
+            autocomplete="new-password"
+            required
+          >
+        </div>
 
-        <label for="confirmPassword">Confirm Password</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          placeholder="Enter your password again"
-          minlength="8"
-          autocomplete="new-password"
-          required
-        >
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Re-enter your password"
+            minlength="8"
+            autocomplete="new-password"
+            required
+          >
+        </div>
+
+        <!-- Show Password checkbox -->
+
+        <label class="show-password">
+          <input type="checkbox" id="showPassword">
+          Show Password
+        </label>
 
         <button type="submit" id="signupButton">
           Create Account
@@ -256,12 +308,17 @@
 
       </form>
 
-      <div id="message" role="status" aria-live="polite"></div>
+      <div
+        id="message"
+        role="status"
+        aria-live="polite"
+      ></div>
 
-      <p class="login-text">
+      <p class="login-link">
         Already have an account?
         <a href="index.html">Login here</a>
       </p>
+
     </section>
   </main>
 
@@ -270,10 +327,13 @@
   </footer>
 
   <!-- Supabase JavaScript library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <script>
-    // STEP 1: Supabase project configuration
+    "use strict";
+
+    // 1. Supabase configuration
 
     const SUPABASE_URL =
       "https://mlhveuqfxbpucorktost.supabase.co";
@@ -281,28 +341,89 @@
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
 
-    // STEP 2: Connect to Supabase
+    // 2. Get page elements
 
-    const supabase = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+    const signupForm =
+      document.getElementById("signupForm");
 
-    const signupForm = document.getElementById("signupForm");
-    const signupButton = document.getElementById("signupButton");
-    const messageBox = document.getElementById("message");
+    const signupButton =
+      document.getElementById("signupButton");
 
-    // Display success or error messages
+    const messageBox =
+      document.getElementById("message");
 
-    function showMessage(message, type) {
-      messageBox.textContent = message;
+    // 3. Show success and error messages
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
       messageBox.className = type;
     }
 
-    // STEP 3: Handle signup
+    // 4. Check Supabase library and configuration
+
+    let supabaseClient = null;
+
+    if (!window.supabase) {
+      showMessage(
+        "The Supabase library could not load. Check your internet connection and refresh the page.",
+        "error"
+      );
+
+      signupButton.disabled = true;
+
+    } else if (
+      SUPABASE_PUBLISHABLE_KEY ===
+      "YOUR_SUPABASE_PUBLISHABLE_KEY"
+    ) {
+      showMessage(
+        "Setup required: Add your actual Supabase publishable key to this file.",
+        "error"
+      );
+
+    } else {
+      try {
+        supabaseClient = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_PUBLISHABLE_KEY
+        );
+      } catch (error) {
+        console.error("Supabase setup error:", error);
+
+        showMessage(
+          "Supabase setup failed: " + error.message,
+          "error"
+        );
+      }
+    }
+
+    // 5. Show or hide both password fields
+
+    document.getElementById("showPassword").addEventListener(
+      "change",
+      function () {
+        const type = this.checked ? "text" : "password";
+
+        document.getElementById("password").type = type;
+
+        document.getElementById("confirmPassword").type = type;
+      }
+    );
+
+    // 6. Handle account registration
 
     signupForm.addEventListener("submit", async function(event) {
       event.preventDefault();
+
+      messageBox.textContent = "";
+      messageBox.className = "";
+
+      if (!supabaseClient) {
+        showMessage(
+          "Supabase is not configured. Check the publishable key and library loading.",
+          "error"
+        );
+        return;
+      }
 
       const name = document.getElementById("fullName")
         .value.trim();
@@ -316,10 +437,13 @@
       const confirmPassword =
         document.getElementById("confirmPassword").value;
 
-      messageBox.textContent = "";
-      messageBox.className = "";
-
-      // Check the password fields
+      if (!name) {
+        showMessage(
+          "Please enter your full name.",
+          "error"
+        );
+        return;
+      }
 
       if (password.length < 8) {
         showMessage(
@@ -331,18 +455,7 @@
 
       if (password !== confirmPassword) {
         showMessage(
-          "Passwords do not match. Please try again.",
-          "error"
-        );
-        return;
-      }
-
-      if (
-        SUPABASE_PUBLISHABLE_KEY ===
-        "YOUR_SUPABASE_PUBLISHABLE_KEY"
-      ) {
-        showMessage(
-          "Please add your actual Supabase publishable key in register.html.",
+          "The passwords do not match.",
           "error"
         );
         return;
@@ -352,53 +465,44 @@
       signupButton.textContent = "Creating Account...";
 
       try {
-        // Create the account in Supabase Authentication
-
-        const { data, error } = await supabase.auth.signUp({
-          email: email,
-          password: password,
-
-          options: {
-            data: {
-              full_name: name
-            },
-
-            emailRedirectTo:
-              "https://bharathibooknest-prog.github.io/Bharathibooknest/"
-          }
-        });
-
-        // Display the actual Supabase error
+        const { data, error } =
+          await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+              data: {
+                full_name: name
+              },
+              emailRedirectTo:
+                "https://bharathibooknest-prog.github.io/Bharathibooknest/"
+            }
+          });
 
         if (error) {
           console.error("Supabase signup error:", error);
 
           showMessage(
-            "Signup error: " + error.message,
+            "Signup failed: " + error.message,
             "error"
           );
 
           return;
         }
 
-        // Check whether Supabase returned a user
-
-        if (!data.user) {
+        if (!data || !data.user) {
           showMessage(
-            "Supabase did not return a user. Please check your project settings.",
+            "Supabase did not return a user. Check your project settings.",
             "error"
           );
           return;
         }
-
-        // Email verification may be required
 
         if (
           data.user.identities &&
           data.user.identities.length === 0
         ) {
           showMessage(
-            "An account with this email may already exist. Try logging in or resetting your password.",
+            "This email may already be registered. Try logging in or resetting your password.",
             "error"
           );
           return;
@@ -406,7 +510,7 @@
 
         if (data.session) {
           showMessage(
-            "Account created successfully! You are signed in. Go to the Home page to continue.",
+            "Account created successfully! You are now signed in. Go to the Home page to continue.",
             "success"
           );
 
@@ -414,7 +518,7 @@
 
         } else {
           showMessage(
-            "Signup request accepted! Check your email inbox and spam folder, then click the verification link before logging in.",
+            "Signup request accepted! Check your email inbox and spam folder for the verification link before logging in.",
             "success"
           );
 
@@ -425,8 +529,8 @@
         console.error("Unexpected signup error:", error);
 
         showMessage(
-          "Unexpected error: " +
-          (error.message || "Please try again."),
+          "Signup error: " +
+          (error.message || "An unexpected error occurred."),
           "error"
         );
 
