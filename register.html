@@ -4,9 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BharathiBookNest - Register & Login</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Sign Up - BharathiBookNest</title>
 
   <style>
     * {
@@ -16,372 +15,427 @@
     body {
       margin: 0;
       min-height: 100vh;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      background:
+        linear-gradient(rgba(255, 248, 239, 0.82),
+                        rgba(255, 248, 239, 0.82)),
+        url("./bharathiyar-background.png") center / cover fixed;
+      color: #30251f;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      text-align: center;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .logo {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+    }
+
+    header h1 {
+      margin: 5px 0;
+      font-size: 26px;
+    }
+
+    nav {
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
+      gap: 22px;
+      padding: 14px;
+      background: #713d2b;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
       align-items: center;
-      font-family: Arial, sans-serif;
-      background: #f8eee3;
-      color: #30251f;
+      justify-content: center;
+      padding: 30px 15px;
     }
 
-    .container {
+    .signup-box {
       width: 100%;
-      max-width: 400px;
-      background: white;
+      max-width: 430px;
       padding: 30px;
-      border-radius: 14px;
-      box-shadow: 0 5px 25px #0002;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     }
 
-    h1 {
+    .signup-box h2 {
       text-align: center;
+      margin-top: 0;
       color: #713d2b;
-      font-size: 27px;
     }
 
-    h2 {
+    .subtitle {
       text-align: center;
+      color: #666;
+      margin-bottom: 25px;
     }
 
     label {
       display: block;
-      margin: 16px 0 7px;
+      margin: 14px 0 6px;
       font-weight: bold;
     }
 
     input {
       width: 100%;
       padding: 12px;
-      border: 1px solid #cbb8a7;
-      border-radius: 6px;
-      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      font-size: 15px;
     }
 
     input:focus {
-      outline: 2px solid #b88a68;
-      outline-offset: 2px;
+      outline: 2px solid #b78368;
+      border-color: #713d2b;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      margin-top: 18px;
+      padding: 13px;
+      margin-top: 22px;
+      border: none;
+      border-radius: 7px;
       background: #713d2b;
       color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
       font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #542c20;
     }
 
     button:disabled {
-      opacity: 0.6;
+      opacity: 0.65;
       cursor: not-allowed;
     }
 
-    .switch {
-      text-align: center;
-      margin-top: 18px;
-      line-height: 1.7;
-    }
-
-    .switch button {
-      width: auto;
-      margin: 0;
-      padding: 0;
-      background: none;
-      color: #713d2b;
-      text-decoration: underline;
-    }
-
     #message {
-      text-align: center;
-      overflow-wrap: anywhere;
-      line-height: 1.5;
-    }
-
-    .back {
-      display: block;
-      text-align: center;
+      display: none;
       margin-top: 18px;
-      color: #713d2b;
+      padding: 12px;
+      border-radius: 7px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
     }
 
-    [hidden] {
-      display: none !important;
+    #message.success {
+      display: block;
+      color: #155724;
+      background: #d4edda;
+    }
+
+    #message.error {
+      display: block;
+      color: #721c24;
+      background: #f8d7da;
+    }
+
+    .login-text {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .login-text a {
+      color: #713d2b;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    @media (max-width: 480px) {
+      .signup-box {
+        padding: 22px;
+      }
+
+      nav {
+        gap: 14px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <main class="container">
+
+  <header>
+    <img
+      src="./booknest-logo.png"
+      alt="BharathiBookNest Logo"
+      class="logo"
+    >
     <h1>BharathiBookNest</h1>
+    <p>Your Favourite Online Book Store</p>
+  </header>
 
-    <!-- REGISTER -->
-    <section id="registerSection">
-      <h2>Create Account</h2>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="books.html">Books</a>
+    <a href="cart.html">My Cart</a>
+  </nav>
 
-      <form id="registerForm">
-        <label for="regName">Full Name</label>
+  <main>
+    <section class="signup-box">
+      <h2>Create Your Account</h2>
+
+      <p class="subtitle">
+        Join BharathiBookNest and discover your next favourite book.
+      </p>
+
+      <form id="signupForm">
+
+        <label for="fullName">Full Name</label>
         <input
-          id="regName"
           type="text"
+          id="fullName"
+          name="fullName"
+          placeholder="Enter your full name"
           autocomplete="name"
-          minlength="2"
-          maxlength="80"
           required
         >
 
-        <label for="regEmail">Email Address</label>
+        <label for="email">Email Address</label>
         <input
-          id="regEmail"
           type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email address"
           autocomplete="email"
-          maxlength="254"
-          placeholder="you@example.com"
           required
         >
 
-        <label for="regPassword">Create Password</label>
+        <label for="password">Password</label>
         <input
-          id="regPassword"
           type="password"
+          id="password"
+          name="password"
+          placeholder="Create a password"
           minlength="8"
-          maxlength="128"
           autocomplete="new-password"
           required
         >
 
-        <button type="submit" id="registerBtn">
-          Sign Up
-        </button>
-      </form>
-
-      <p class="switch">
-        Already have an account?
-        <button type="button" id="showLogin">Login</button>
-      </p>
-    </section>
-
-    <!-- LOGIN -->
-    <section id="loginSection" hidden>
-      <h2>Login</h2>
-
-      <form id="loginForm">
-        <label for="loginEmail">Email Address</label>
+        <label for="confirmPassword">Confirm Password</label>
         <input
-          id="loginEmail"
-          type="email"
-          autocomplete="email"
-          required
-        >
-
-        <label for="loginPassword">Password</label>
-        <input
-          id="loginPassword"
           type="password"
-          maxlength="128"
-          autocomplete="current-password"
+          id="confirmPassword"
+          name="confirmPassword"
+          placeholder="Enter your password again"
+          minlength="8"
+          autocomplete="new-password"
           required
         >
 
-        <button type="submit" id="loginBtn">
-          Login
+        <button type="submit" id="signupButton">
+          Create Account
         </button>
+
       </form>
 
-      <p class="switch">
-        New to BookNest?
-        <button type="button" id="showRegister">Create Account</button>
+      <div id="message" role="status" aria-live="polite"></div>
+
+      <p class="login-text">
+        Already have an account?
+        <a href="index.html">Login here</a>
       </p>
     </section>
-
-    <!-- EMAIL CONFIRMATION MESSAGE -->
-    <section id="verifySection" hidden>
-      <h2>Verify Your Email</h2>
-      <p>
-        Signup request received. Check your email inbox and click
-        the verification link to confirm your account.
-      </p>
-      <p>
-        Email varavillai endraal Spam/Junk folder-ai check pannu.
-      </p>
-      <button type="button" id="backToLogin">
-        Go to Login
-      </button>
-    </section>
-
-    <p id="message" role="status" aria-live="polite"></p>
-
-    <a class="back" href="index.html">Back to Home</a>
   </main>
 
-  <script>
-    "use strict";
+  <footer>
+    &copy; 2026 BharathiBookNest | Online Book Store
+  </footer>
 
-    // Supabase connection
+  <!-- Supabase JavaScript library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // STEP 1: Supabase project configuration
+
     const SUPABASE_URL =
       "https://mlhveuqfxbpucorktost.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
 
+    // STEP 2: Connect to Supabase
+
     const supabase = window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_PUBLISHABLE_KEY
     );
 
-    const registerSection =
-      document.getElementById("registerSection");
+    const signupForm = document.getElementById("signupForm");
+    const signupButton = document.getElementById("signupButton");
+    const messageBox = document.getElementById("message");
 
-    const loginSection =
-      document.getElementById("loginSection");
+    // Display success or error messages
 
-    const verifySection =
-      document.getElementById("verifySection");
-
-    const message =
-      document.getElementById("message");
-
-    const registerForm =
-      document.getElementById("registerForm");
-
-    const loginForm =
-      document.getElementById("loginForm");
-
-    const registerBtn =
-      document.getElementById("registerBtn");
-
-    const loginBtn =
-      document.getElementById("loginBtn");
-
-    function showSection(section) {
-      registerSection.hidden = section !== registerSection;
-      loginSection.hidden = section !== loginSection;
-      verifySection.hidden = section !== verifySection;
-      message.textContent = "";
+    function showMessage(message, type) {
+      messageBox.textContent = message;
+      messageBox.className = type;
     }
 
-    document.getElementById("showLogin").addEventListener(
-      "click", () => showSection(loginSection)
-    );
+    // STEP 3: Handle signup
 
-    document.getElementById("showRegister").addEventListener(
-      "click", () => showSection(registerSection)
-    );
-
-    document.getElementById("backToLogin").addEventListener(
-      "click", () => showSection(loginSection)
-    );
-
-    // SIGNUP + EMAIL VERIFICATION
-    registerForm.addEventListener("submit", async event => {
+    signupForm.addEventListener("submit", async function(event) {
       event.preventDefault();
 
-      if (!registerForm.reportValidity()) return;
+      const name = document.getElementById("fullName")
+        .value.trim();
 
-      const name =
-        document.getElementById("regName").value.trim();
+      const email = document.getElementById("email")
+        .value.trim();
 
-      const email =
-        document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("password")
+        .value;
 
-      const password =
-        document.getElementById("regPassword").value;
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
 
-      registerBtn.disabled = true;
-      registerBtn.textContent = "Creating Account...";
-      message.textContent = "Please wait...";
+      messageBox.textContent = "";
+      messageBox.className = "";
+
+      // Check the password fields
+
+      if (password.length < 8) {
+        showMessage(
+          "Your password must contain at least 8 characters.",
+          "error"
+        );
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage(
+          "Passwords do not match. Please try again.",
+          "error"
+        );
+        return;
+      }
+
+      if (
+        SUPABASE_PUBLISHABLE_KEY ===
+        "YOUR_SUPABASE_PUBLISHABLE_KEY"
+      ) {
+        showMessage(
+          "Please add your actual Supabase publishable key in register.html.",
+          "error"
+        );
+        return;
+      }
+
+      signupButton.disabled = true;
+      signupButton.textContent = "Creating Account...";
 
       try {
+        // Create the account in Supabase Authentication
+
         const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: email,
+          password: password,
+
           options: {
             data: {
               full_name: name
             },
+
             emailRedirectTo:
               "https://bharathibooknest-prog.github.io/Bharathibooknest/"
           }
         });
 
-        if (error) throw error;
+        // Display the actual Supabase error
 
-        if (data.session) {
-          message.textContent =
-            "Account created successfully! Opening BookNest...";
+        if (error) {
+          console.error("Supabase signup error:", error);
 
-          window.location.href = "./index.html";
+          showMessage(
+            "Signup error: " + error.message,
+            "error"
+          );
+
           return;
         }
 
-        showSection(verifySection);
-        message.textContent =
-          "Check your email to verify your account.";
+        // Check whether Supabase returned a user
 
-      } catch (error) {
-        message.textContent =
-          error.message || "Signup failed. Please try again.";
-      } finally {
-        registerBtn.disabled = false;
-        registerBtn.textContent = "Sign Up";
-      }
-    });
-
-    // LOGIN
-    loginForm.addEventListener("submit", async event => {
-      event.preventDefault();
-
-      if (!loginForm.reportValidity()) return;
-
-      const email =
-        document.getElementById("loginEmail").value.trim();
-
-      const password =
-        document.getElementById("loginPassword").value;
-
-      loginBtn.disabled = true;
-      loginBtn.textContent = "Logging In...";
-      message.textContent = "Please wait...";
-
-      try {
-        const { data, error } =
-          await supabase.auth.signInWithPassword({
-            email,
-            password
-          });
-
-        if (error) throw error;
-
-        if (!data.session) {
-          throw new Error(
-            "Login session was not created. Please try again."
+        if (!data.user) {
+          showMessage(
+            "Supabase did not return a user. Please check your project settings.",
+            "error"
           );
+          return;
         }
 
-        window.location.href = "./index.html";
+        // Email verification may be required
+
+        if (
+          data.user.identities &&
+          data.user.identities.length === 0
+        ) {
+          showMessage(
+            "An account with this email may already exist. Try logging in or resetting your password.",
+            "error"
+          );
+          return;
+        }
+
+        if (data.session) {
+          showMessage(
+            "Account created successfully! You are signed in. Go to the Home page to continue.",
+            "success"
+          );
+
+          signupForm.reset();
+
+        } else {
+          showMessage(
+            "Signup request accepted! Check your email inbox and spam folder, then click the verification link before logging in.",
+            "success"
+          );
+
+          signupForm.reset();
+        }
 
       } catch (error) {
-        message.textContent =
-          error.message || "Login failed. Please try again.";
+        console.error("Unexpected signup error:", error);
+
+        showMessage(
+          "Unexpected error: " +
+          (error.message || "Please try again."),
+          "error"
+        );
+
       } finally {
-        loginBtn.disabled = false;
-        loginBtn.textContent = "Login";
+        signupButton.disabled = false;
+        signupButton.textContent = "Create Account";
       }
     });
-
-    // Check existing session
-    async function checkSession() {
-      const { data, error } = await supabase.auth.getSession();
-
-      if (!error && data.session) {
-        window.location.href = "./index.html";
-      }
-    }
-
-    checkSession();
   </script>
+
 </body>
 </html>
