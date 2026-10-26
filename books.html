@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BookNest - Books</title>
-
-  <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <title>BharathiBookNest - Books</title>
 
   <style>
     * {
@@ -119,138 +116,23 @@
       color: #713d2b;
     }
 
-    .books {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 20px;
-      padding: 10px;
-      max-width: 500px;
-      margin: 0 auto 40px;
-    }
-
-    .book {
-      min-width: 0;
-      padding: 20px;
+    .empty-books {
+      max-width: 600px;
+      margin: 50px auto 80px;
+      padding: 35px 20px;
       text-align: center;
-      background: rgba(255, 248, 239, 0.75);
+      background: rgba(255, 248, 239, 0.80);
       border-radius: 12px;
       box-shadow: 0 3px 12px rgba(48, 37, 31, 0.12);
     }
 
-    .book-cover-image {
-      display: block;
-      width: 100%;
-      max-width: 100px;
-      height: 100px;
-      object-fit: contain;
-      margin: 0 auto 15px;
-    }
-
-    .book h3 {
+    .empty-books h3 {
       color: #713d2b;
-      margin: 10px 0;
+      margin-top: 0;
     }
 
-    .book p {
-      margin: 8px 0;
-    }
-
-    .price {
-      font-size: 19px;
-      font-weight: bold;
-      color: #315b42;
-    }
-
-    .book-actions {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 12px 0;
-    }
-
-    .book button {
-      background: #198754;
-      color: white;
-      border: none;
-      padding: 10px 14px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .book button:hover {
-      background: #14532d;
-    }
-
-    .book button.add-cart-btn {
-      background: #8b4513;
-    }
-
-    .book button.add-cart-btn:hover {
-      background: #5c2e0b;
-    }
-
-    .book button.read-btn {
-      background: #315b42;
-    }
-
-    .book button.read-btn:hover {
-      background: #23432f;
-    }
-
-    .preview-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 2000;
-      background: rgba(0, 0, 0, 0.8);
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .preview-modal[hidden] {
-      display: none;
-    }
-
-    .preview-box {
-      background: white;
-      color: #30251f;
-      max-width: 850px;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 10px;
-    }
-
-    .preview-box h2 {
-      text-align: center;
-      color: #713d2b;
-    }
-
-    .preview-close {
-      display: block;
-      margin-left: auto;
-      background: #713d2b;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 9px 13px;
-      cursor: pointer;
-    }
-
-    .preview-page {
-      text-align: center;
-      margin: 25px auto;
-      overflow: hidden;
-    }
-
-    .preview-page canvas {
-      display: block;
-      max-width: 100%;
-      height: auto;
-      margin: 0 auto;
-      box-shadow: 0 2px 8px #0002;
+    .empty-books p {
+      line-height: 1.6;
     }
 
     .contact {
@@ -294,15 +176,8 @@
         gap: 10px;
       }
 
-      .books {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        padding: 12px;
-      }
-
-      .book-cover-image {
-        max-width: 160px;
-        height: 220px;
+      .empty-books {
+        margin: 30px 12px 50px;
       }
     }
   </style>
@@ -323,7 +198,7 @@
       <a href="cart.html">My Cart</a>
       <a href="#contact">Contact</a>
 
-      <a href="login.html" class="login-btn" id="loginLink">
+      <a href="index.html" class="login-btn" id="loginLink">
         Login
       </a>
 
@@ -344,73 +219,16 @@
   <!-- PAGE TITLE -->
   <h2 class="page-title">Our Books</h2>
 
-  <!-- BOOK CARDS -->
-  <main class="books">
-
-    <!-- DIFFERENTIATION BOOK -->
-    <div class="book">
-      <img
-        src="./basics-cover.png"
-        alt="Basics of Differentiation Book Cover"
-        class="book-cover-image"
-      >
-
-      <h3>Basics of Differentiation</h3>
-      <p>Mathematics Book</p>
-      <p class="price">₹200</p>
-
-      <div class="book-actions" id="differentiation-actions"></div>
-
-      <button
-        type="button"
-        onclick="openPreview('differentiation')">
-        Read Sample
-      </button>
-    </div>
-
-    <!-- MATRICES BOOK -->
-    <div class="book">
-      <img
-        src="./basics-of-matrices.png"
-        alt="Basics of Matrices Book Cover"
-        class="book-cover-image"
-      >
-
-      <h3>Basics of Matrices</h3>
-      <p>Mathematics Book</p>
-      <p class="price">₹180</p>
-
-      <div class="book-actions" id="matrices-actions"></div>
-
-      <button
-        type="button"
-        onclick="openPreview('matrices')">
-        Read Sample
-      </button>
-    </div>
-
+  <!-- EMPTY BOOKS MESSAGE -->
+  <main class="empty-books">
+    <h3>Books Coming Soon!</h3>
+    <p>
+      We are preparing new books for you.
+    </p>
+    <p>
+      Please visit BharathiBookNest again soon!
+    </p>
   </main>
-
-  <!-- PDF PREVIEW MODAL -->
-  <div id="previewModal" class="preview-modal" hidden>
-    <div class="preview-box">
-
-      <button
-        class="preview-close"
-        type="button"
-        onclick="closePreview()">
-        Close ✕
-      </button>
-
-      <h2 id="previewTitle">Free Book Preview</h2>
-
-      <p style="text-align:center">
-        Free preview — first 3 pages
-      </p>
-
-      <div id="previewPages"></div>
-    </div>
-  </div>
 
   <!-- FOOTER -->
   <footer class="contact" id="contact">
@@ -419,419 +237,86 @@
     <p>Read, Learn and Grow!</p>
   </footer>
 
+  <!-- SUPABASE LOGIN STATUS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
     "use strict";
 
-    /* =====================================
-       1. BOOK INFORMATION
-    ===================================== */
+    const SUPABASE_URL =
+      "https://mlhveuqfxbpucorktost.supabase.co";
 
-    const bookCatalog = {
-      differentiation: {
-        id: "differentiation",
-        name: "Basics of Differentiation",
-        price: 200,
-        pdf: "./basics-of-diferentiation.pdf"
-      },
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
 
-      matrices: {
-        id: "matrices",
-        name: "Basics of Matrices",
-        price: 180,
-        pdf: "./basics-of-matrices.pdf"
-      }
-    };
-
-    /* =====================================
-       2. LOGIN STATUS
-    ===================================== */
-
-    async function updateNavbar() {
-      const loginLink = document.getElementById("loginLink");
-      const registerLink = document.getElementById("registerLink");
-      const profileLink = document.getElementById("profileLink");
-      const logoutLink = document.getElementById("logoutLink");
-
-      try {
-        const response = await fetch("/api/me", {
-          method: "GET",
-          credentials: "same-origin",
-          cache: "no-store",
-          headers: {
-            "Accept": "application/json"
-          }
-        });
-
-        if (!response.ok) {
-          showLoggedOutNavbar();
-          return;
-        }
-
-        const data = await response.json();
-
-        // Adapt to the API response format.
-        const loggedIn =
-          Boolean(data.user) ||
-          data.loggedIn === true;
-
-        if (loggedIn) {
-          loginLink.hidden = true;
-          registerLink.hidden = true;
-          profileLink.hidden = false;
-          logoutLink.hidden = false;
-        } else {
-          showLoggedOutNavbar();
-        }
-
-      } catch (error) {
-        console.error("Login status error:", error);
-        showLoggedOutNavbar();
-      }
-    }
+    const loginLink = document.getElementById("loginLink");
+    const registerLink = document.getElementById("registerLink");
+    const profileLink = document.getElementById("profileLink");
+    const logoutLink = document.getElementById("logoutLink");
 
     function showLoggedOutNavbar() {
-      document.getElementById("loginLink").hidden = false;
-      document.getElementById("registerLink").hidden = false;
-      document.getElementById("profileLink").hidden = true;
-      document.getElementById("logoutLink").hidden = true;
+      loginLink.hidden = false;
+      registerLink.hidden = false;
+      profileLink.hidden = true;
+      logoutLink.hidden = true;
     }
 
-    document.getElementById("logoutLink").addEventListener(
-      "click",
-      async function (event) {
+    function updateNavbar(session) {
+      const loggedIn = Boolean(session && session.user);
+
+      loginLink.hidden = loggedIn;
+      registerLink.hidden = loggedIn;
+      profileLink.hidden = !loggedIn;
+      logoutLink.hidden = !loggedIn;
+    }
+
+    async function initializeAuth() {
+      if (
+        !window.supabase ||
+        SUPABASE_PUBLISHABLE_KEY === "YOUR_SUPABASE_PUBLISHABLE_KEY"
+      ) {
+        console.warn(
+          "Add your Supabase publishable key to enable login status."
+        );
+        showLoggedOutNavbar();
+        return;
+      }
+
+      const client = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
+
+      const { data, error } = await client.auth.getSession();
+
+      if (error) {
+        console.error("Unable to check login status:", error);
+        showLoggedOutNavbar();
+        return;
+      }
+
+      updateNavbar(data.session);
+
+      client.auth.onAuthStateChange((_event, session) => {
+        updateNavbar(session);
+      });
+
+      logoutLink.addEventListener("click", async function (event) {
         event.preventDefault();
 
-        try {
-          const response = await fetch("/api/logout", {
-            method: "POST",
-            credentials: "same-origin"
-          });
+        const { error } = await client.auth.signOut();
 
-          if (!response.ok) {
-            throw new Error("Logout failed");
-          }
-
-          window.location.replace("login.html");
-
-        } catch (error) {
-          console.error("Logout error:", error);
-          alert("Unable to log out. Please check the server.");
-        }
-      }
-    );
-
-    /* =====================================
-       3. PURCHASED BOOKS
-    ===================================== */
-
-    function getPurchasedBooks() {
-      try {
-        const data = JSON.parse(
-          localStorage.getItem("booknestPurchased") || "[]"
-        );
-
-        return Array.isArray(data)
-          ? data.filter(item =>
-              item &&
-              typeof item.id === "string" &&
-              bookCatalog[item.id]
-            )
-          : [];
-
-      } catch (error) {
-        console.error("Purchase data error:", error);
-        return [];
-      }
-    }
-
-    function savePurchasedBooks(books) {
-      try {
-        localStorage.setItem(
-          "booknestPurchased",
-          JSON.stringify(books)
-        );
-
-        return true;
-
-      } catch (error) {
-        console.error("Unable to save purchase:", error);
-        alert("Unable to save book information.");
-        return false;
-      }
-    }
-
-    /* Demo purchase only; no real payment is processed. */
-    function buyNow(id) {
-      const book = bookCatalog[id];
-
-      if (!book) {
-        alert("Book not found.");
-        return;
-      }
-
-      const purchased = getPurchasedBooks();
-
-      if (purchased.some(item => item.id === id)) {
-        alert("You have already purchased this demo book.");
-        return;
-      }
-
-      const success = savePurchasedBooks([
-        ...purchased,
-        book
-      ]);
-
-      if (!success) return;
-
-      alert(
-        "Demo purchase successful! You can now open the full PDF."
-      );
-
-      showBookButtons();
-    }
-
-    /* =====================================
-       4. ADD TO CART
-    ===================================== */
-
-    function getCart() {
-      try {
-        const data = JSON.parse(
-          localStorage.getItem("booknestCart") || "[]"
-        );
-
-        return Array.isArray(data) ? data : [];
-
-      } catch (error) {
-        console.error("Cart data error:", error);
-        return [];
-      }
-    }
-
-    function addToCart(id) {
-      const book = bookCatalog[id];
-
-      if (!book) {
-        alert("Book not found.");
-        return;
-      }
-
-      const cart = getCart();
-
-      const existingBook = cart.find(
-        item => item && item.id === id
-      );
-
-      if (existingBook) {
-        alert("This book is already in your cart!");
-        return;
-      }
-
-      cart.push({
-        id: book.id,
-        name: book.name,
-        price: book.price,
-        quantity: 1
-      });
-
-      try {
-        localStorage.setItem(
-          "booknestCart",
-          JSON.stringify(cart)
-        );
-
-        alert(book.name + " added to cart successfully!");
-
-      } catch (error) {
-        console.error("Unable to save cart:", error);
-        alert("Unable to add this book. Please try again.");
-      }
-    }
-
-    /* =====================================
-       5. BOOK BUTTONS
-    ===================================== */
-
-    function showBookButtons() {
-      Object.values(bookCatalog).forEach(book => {
-        const container = document.getElementById(
-          book.id + "-actions"
-        );
-
-        if (!container) return;
-
-        container.replaceChildren();
-
-        const owned = getPurchasedBooks().some(
-          item => item.id === book.id
-        );
-
-        // Buy / Read Full Book button
-        const buyButton = document.createElement("button");
-        buyButton.type = "button";
-
-        if (owned) {
-          buyButton.textContent = "Read Full Book";
-          buyButton.className = "read-btn";
-
-          buyButton.addEventListener("click", function () {
-            readFullBook(book.id);
-          });
-
-        } else {
-          buyButton.textContent = "Buy - ₹" + book.price;
-
-          buyButton.addEventListener("click", function () {
-            buyNow(book.id);
-          });
-        }
-
-        container.appendChild(buyButton);
-
-        // Add to Cart button
-        const cartButton = document.createElement("button");
-        cartButton.type = "button";
-        cartButton.className = "add-cart-btn";
-        cartButton.textContent = "🛒 Add to Cart";
-
-        cartButton.addEventListener("click", function () {
-          addToCart(book.id);
-        });
-
-        container.appendChild(cartButton);
-      });
-    }
-
-    /* =====================================
-       6. PDF PREVIEW
-    ===================================== */
-
-    async function openPreview(id) {
-      const book = bookCatalog[id];
-
-      if (!book) {
-        alert("Book not found.");
-        return;
-      }
-
-      const modal = document.getElementById("previewModal");
-      const pagesContainer = document.getElementById("previewPages");
-      const title = document.getElementById("previewTitle");
-
-      modal.hidden = false;
-      title.textContent = book.name + " - Free Preview";
-      pagesContainer.textContent = "Loading PDF preview...";
-
-      if (!window.pdfjsLib) {
-        pagesContainer.textContent =
-          "PDF viewer failed to load. Check your internet connection.";
-        return;
-      }
-
-      try {
-        const pdf = await pdfjsLib.getDocument(book.pdf).promise;
-
-        pagesContainer.replaceChildren();
-
-        const pageCount = Math.min(3, pdf.numPages);
-
-        if (pageCount === 0) {
-          pagesContainer.textContent = "This PDF has no pages.";
+        if (error) {
+          alert("Unable to log out. Please try again.");
+          console.error(error);
           return;
         }
 
-        for (let n = 1; n <= pageCount; n++) {
-          const page = await pdf.getPage(n);
-          const viewport = page.getViewport({ scale: 1.2 });
-
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
-
-          canvas.width = Math.ceil(viewport.width);
-          canvas.height = Math.ceil(viewport.height);
-
-          const wrapper = document.createElement("div");
-          wrapper.className = "preview-page";
-
-          const heading = document.createElement("h3");
-          heading.textContent = "Page " + n;
-
-          wrapper.appendChild(heading);
-          wrapper.appendChild(canvas);
-          pagesContainer.appendChild(wrapper);
-
-          await page.render({
-            canvasContext: context,
-            viewport: viewport
-          }).promise;
-        }
-
-      } catch (error) {
-        console.error("PDF preview error:", error);
-
-        pagesContainer.textContent =
-          "Unable to load PDF. Check the PDF filename and path.";
-      }
-    }
-
-    function closePreview() {
-      document.getElementById("previewModal").hidden = true;
-    }
-
-    /* =====================================
-       7. OPEN FULL PDF
-    ===================================== */
-
-    function readFullBook(id) {
-      const book = bookCatalog[id];
-
-      if (!book) {
-        alert("Book not found.");
-        return;
-      }
-
-      const purchased = getPurchasedBooks().some(
-        item => item.id === id
-      );
-
-      if (!purchased) {
-        alert("Please purchase this demo book first.");
-        return;
-      }
-
-      const pdfWindow = window.open(
-        book.pdf,
-        "_blank",
-        "noopener,noreferrer"
-      );
-
-      if (!pdfWindow) {
-        alert("Allow pop-ups in your browser and try again.");
-      }
-    }
-
-    /* =====================================
-       8. PAGE INITIALIZATION
-    ===================================== */
-
-    document.addEventListener("DOMContentLoaded", function () {
-      updateNavbar();
-      showBookButtons();
-
-      const modal = document.getElementById("previewModal");
-
-      modal.addEventListener("click", function (event) {
-        if (event.target === modal) {
-          closePreview();
-        }
+        window.location.replace("index.html");
       });
-    });
-
-    /* PDF.js worker */
-    if (window.pdfjsLib) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     }
+
+    initializeAuth();
   </script>
 
 </body>
