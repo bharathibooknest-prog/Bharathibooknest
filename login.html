@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Sign Up | BookNest</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f5fa;
+      color: #243b64;
+    }
+
+    header {
+      background: #243b64;
+      color: white;
+      padding: 18px 7%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      margin-left: 16px;
+    }
+
+    .container {
+      width: min(420px, 92%);
+      margin: 55px auto;
+      background: white;
+      padding: 28px;
+      border-radius: 14px;
+      box-shadow: 0 6px 24px #00000012;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #68758b;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin: 24px 0;
+    }
+
+    .tabs button {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #243b64;
+      border-radius: 7px;
+      cursor: pointer;
+      background: white;
+      color: #243b64;
+    }
+
+    .tabs button.active {
+      background: #243b64;
+      color: white;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 14px 0 7px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd2df;
+      border-radius: 7px;
+      font-size: 15px;
+    }
+
+    .hint {
+      color: #68758b;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .submit {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px;
+      border: 0;
+      border-radius: 7px;
+      background: #243b64;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .submit:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    #message {
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <strong>📚 BookNest</strong>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="books.html">Books</a>
+  </nav>
+</header>
+
+<main class="container">
+  <h1>Welcome to BookNest</h1>
+  <p class="subtitle">Sign in or create your account</p>
+
+  <div class="tabs">
+    <button type="button" id="loginTab" class="active">
+      Login
+    </button>
+
+    <button type="button" id="signupTab">
+      Sign Up
+    </button>
+  </div>
+
+  <form id="authForm">
+
+    <div id="nameGroup" class="hidden">
+      <label for="name">Full Name</label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        minlength="2"
+        maxlength="80"
+      >
+    </div>
+
+    <label for="phone">Phone Number</label>
+    <input
+      id="phone"
+      name="phone"
+      type="tel"
+      autocomplete="tel"
+      placeholder="+919876543210"
+      pattern="[+][1-9][0-9]{7,14}"
+      title="Enter country code followed by your phone number, for example +919876543210"
+      required
+    >
+
+    <p class="hint">
+      Include your country code, for example +91 for India.
+    </p>
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      name="password"
+      type="password"
+      autocomplete="current-password"
+      minlength="8"
+      maxlength="128"
+      required
+    >
+
+    <button class="submit" id="submitButton" type="submit">
+      Login
+    </button>
+
+  </form>
+
+  <p id="message" role="status" aria-live="polite"></p>
+</main>
+
+<script>
+  const loginTab = document.getElementById("loginTab");
+  const signupTab = document.getElementById("signupTab");
+  const nameGroup = document.getElementById("nameGroup");
+  const nameInput = document.getElementById("name");
+  const phoneInput = document.getElementById("phone");
+  const passwordInput = document.getElementById("password");
+  const submitButton = document.getElementById("submitButton");
+  const message = document.getElementById("message");
+  const authForm = document.getElementById("authForm");
+
+  let mode = "login";
+
+  function setMode(nextMode) {
+    mode = nextMode;
+
+    const signup = mode === "signup";
+
+    loginTab.classList.toggle("active", !signup);
+    signupTab.classList.toggle("active", signup);
+
+    nameGroup.classList.toggle("hidden", !signup);
+    nameInput.required = signup;
+
+    passwordInput.autocomplete = signup
+      ? "new-password"
+      : "current-password";
+
+    submitButton.textContent = signup
+      ? "Create Account"
+      : "Login";
+
+    message.textContent = "";
+  }
+
+  loginTab.addEventListener("click", function() {
+    setMode("login");
+  });
+
+  signupTab.addEventListener("click", function() {
+    setMode("signup");
+  });
+
+  authForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    if (submitButton.disabled) return;
+
+    message.textContent = "Please wait...";
+    submitButton.disabled = true;
+
+    const payload = {
+      phone: phoneInput.value.trim(),
+      password: passwordInput.value
+    };
+
+    if (mode === "signup") {
+      payload.name = nameInput.value.trim();
+    }
+
+    try {
+      const response = await fetch(
+        mode === "signup" ? "/api/register" : "/api/login",
+        {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || "Request failed. Please try again."
+        );
+      }
+
+      message.textContent = result.message ||
+        (mode === "signup"
+          ? "Account created successfully!"
+          : "Login successful!");
+
+      window.location.assign("profile.html");
+
+    } catch (error) {
+      console.error("BookNest authentication error:", error);
+
+      if (error instanceof TypeError) {
+        message.textContent =
+          "Server connection failed. Check the server and open this page using http://localhost:3000/login.html";
+      } else {
+        message.textContent = error.message ||
+          "Something went wrong. Please try again.";
+      }
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
