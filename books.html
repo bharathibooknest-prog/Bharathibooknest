@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>BharathiBookNest - Books</title>
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
@@ -15,12 +19,14 @@
       font-family: Arial, sans-serif;
       color: #30251f;
       min-height: 100vh;
+
       background-image:
         linear-gradient(
           rgba(255, 248, 239, 0.15),
           rgba(255, 248, 239, 0.15)
         ),
         url("./bharathiyar-background.png");
+
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -104,6 +110,11 @@
     nav a.logout-btn {
       background-color: #a33b32;
       color: white;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: inherit;
     }
 
     [hidden] {
@@ -112,35 +123,67 @@
 
     .page-title {
       text-align: center;
-      margin: 30px 0;
+      margin: 35px 0 25px;
       color: #713d2b;
+      font-size: 32px;
     }
 
+    /* EMPTY BOOKS SECTION */
     .empty-books {
-      max-width: 600px;
-      margin: 50px auto 80px;
-      padding: 35px 20px;
+      width: calc(100% - 30px);
+      max-width: 650px;
+      margin: 40px auto 80px;
+      padding: 45px 25px;
       text-align: center;
-      background: rgba(255, 248, 239, 0.80);
+
+      background: rgba(255, 248, 239, 0.88);
       border-radius: 12px;
-      box-shadow: 0 3px 12px rgba(48, 37, 31, 0.12);
+
+      box-shadow:
+        0 3px 12px rgba(48, 37, 31, 0.15);
     }
 
-    .empty-books h3 {
+    .empty-books .book-icon {
+      font-size: 55px;
+      margin-bottom: 15px;
+    }
+
+    .empty-books h2 {
       color: #713d2b;
-      margin-top: 0;
+      margin: 10px 0;
+      font-size: 25px;
     }
 
     .empty-books p {
-      line-height: 1.6;
+      font-size: 16px;
+      line-height: 1.7;
+      margin: 10px 0;
     }
 
+    .home-button {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 12px 22px;
+      border-radius: 6px;
+
+      background: #8b4513;
+      color: white;
+
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .home-button:hover {
+      background: #5c2e0b;
+    }
+
+    /* FOOTER */
     .contact {
-      padding: 20px;
+      padding: 25px 20px;
       text-align: center;
       color: white;
       text-shadow: 1px 1px 4px #30251f;
-      background: rgba(48, 37, 31, 0.75);
+      background: rgba(48, 37, 31, 0.80);
     }
 
     .contact h2 {
@@ -148,9 +191,14 @@
     }
 
     .contact p {
-      margin: 6px;
+      margin: 8px;
     }
 
+    .contact a {
+      color: white;
+    }
+
+    /* RESPONSIVE DESIGN */
     @media (max-width: 850px) {
       header {
         justify-content: center;
@@ -176,8 +224,17 @@
         gap: 10px;
       }
 
+      .page-title {
+        font-size: 27px;
+      }
+
       .empty-books {
-        margin: 30px 12px 50px;
+        padding: 35px 18px;
+        margin-top: 25px;
+      }
+
+      .empty-books h2 {
+        font-size: 22px;
       }
     }
   </style>
@@ -185,61 +242,120 @@
 
 <body>
 
-  <!-- HEADER AND NAVIGATION -->
+  <!-- HEADER -->
   <header>
+
     <div class="brand">
-      <img src="./booknest-logo.png" alt="BookNest Logo">
+      <img
+        src="./booknest-logo.png"
+        alt="BharathiBookNest Logo"
+      >
+
       <h1>BharathiBookNest</h1>
     </div>
 
+    <!-- NAVIGATION -->
     <nav>
       <a href="index.html">Home</a>
+
       <a href="books.html">Books</a>
+
       <a href="cart.html">My Cart</a>
+
       <a href="#contact">Contact</a>
 
-      <a href="index.html" class="login-btn" id="loginLink">
+      <a
+        href="index.html"
+        class="login-btn"
+        id="loginLink"
+      >
         Login
       </a>
 
-      <a href="register.html" class="register-btn" id="registerLink">
+      <a
+        href="register.html"
+        class="register-btn"
+        id="registerLink"
+      >
         Register
       </a>
 
-      <a href="profile.html" class="profile-btn" id="profileLink" hidden>
+      <a
+        href="profile.html"
+        class="profile-btn"
+        id="profileLink"
+        hidden
+      >
         My Profile
       </a>
 
-      <a href="#" class="logout-btn" id="logoutLink" hidden>
+      <a
+        href="#"
+        class="logout-btn"
+        id="logoutLink"
+        role="button"
+        hidden
+      >
         Logout
       </a>
     </nav>
+
   </header>
 
   <!-- PAGE TITLE -->
   <h2 class="page-title">Our Books</h2>
 
-  <!-- EMPTY BOOKS MESSAGE -->
-  <main class="empty-books">
-    <h3>Books Coming Soon!</h3>
-    <p>
-      We are preparing new books for you.
-    </p>
-    <p>
-      Please visit BharathiBookNest again soon!
-    </p>
+  <!-- NO BOOKS DISPLAYED -->
+  <main>
+
+    <section class="empty-books">
+
+      <div class="book-icon" aria-hidden="true">
+        📚
+      </div>
+
+      <h2>Books Coming Soon!</h2>
+
+      <p>
+        Welcome to BharathiBookNest.
+      </p>
+
+      <p>
+        We are preparing a collection of books for you.
+        Please visit us again soon!
+      </p>
+
+      <a href="index.html" class="home-button">
+        Back to Home
+      </a>
+
+    </section>
+
   </main>
 
-  <!-- FOOTER -->
+  <!-- CONTACT FOOTER -->
   <footer class="contact" id="contact">
+
     <h2>Contact BookNest</h2>
+
     <p>Welcome to BharathiBookNest</p>
+
     <p>Read, Learn and Grow!</p>
+
+    <p>
+      Email:
+      <a href="mailto:bharathibooknest@gmail.com">
+        bharathibooknest@gmail.com
+      </a>
+    </p>
+
+    <p>
+      &copy; 2026 BharathiBookNest
+    </p>
+
   </footer>
 
-  <!-- SUPABASE LOGIN STATUS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+  <!-- SUPABASE AUTHENTICATION -->
   <script>
     "use strict";
 
@@ -249,10 +365,19 @@
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
 
-    const loginLink = document.getElementById("loginLink");
-    const registerLink = document.getElementById("registerLink");
-    const profileLink = document.getElementById("profileLink");
-    const logoutLink = document.getElementById("logoutLink");
+    const loginLink =
+      document.getElementById("loginLink");
+
+    const registerLink =
+      document.getElementById("registerLink");
+
+    const profileLink =
+      document.getElementById("profileLink");
+
+    const logoutLink =
+      document.getElementById("logoutLink");
+
+    let supabaseClient = null;
 
     function showLoggedOutNavbar() {
       loginLink.hidden = false;
@@ -262,7 +387,9 @@
     }
 
     function updateNavbar(session) {
-      const loggedIn = Boolean(session && session.user);
+      const loggedIn = Boolean(
+        session && session.user
+      );
 
       loginLink.hidden = loggedIn;
       registerLink.hidden = loggedIn;
@@ -271,49 +398,83 @@
     }
 
     async function initializeAuth() {
-      if (
-        !window.supabase ||
-        SUPABASE_PUBLISHABLE_KEY === "YOUR_SUPABASE_PUBLISHABLE_KEY"
-      ) {
-        console.warn(
-          "Add your Supabase publishable key to enable login status."
+      if (!window.supabase) {
+        console.error(
+          "Supabase library could not be loaded."
         );
+
         showLoggedOutNavbar();
         return;
       }
 
-      const client = window.supabase.createClient(
+      if (
+        !SUPABASE_PUBLISHABLE_KEY ||
+        SUPABASE_PUBLISHABLE_KEY ===
+          "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5"
+      ) {
+        console.warn(
+          "Please add your Supabase publishable key."
+        );
+
+        showLoggedOutNavbar();
+        return;
+      }
+
+      supabaseClient = window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_PUBLISHABLE_KEY
       );
 
-      const { data, error } = await client.auth.getSession();
-
-      if (error) {
-        console.error("Unable to check login status:", error);
-        showLoggedOutNavbar();
-        return;
-      }
-
-      updateNavbar(data.session);
-
-      client.auth.onAuthStateChange((_event, session) => {
-        updateNavbar(session);
-      });
-
-      logoutLink.addEventListener("click", async function (event) {
-        event.preventDefault();
-
-        const { error } = await client.auth.signOut();
+      try {
+        const { data, error } =
+          await supabaseClient.auth.getSession();
 
         if (error) {
-          alert("Unable to log out. Please try again.");
-          console.error(error);
-          return;
+          throw error;
         }
 
-        window.location.replace("index.html");
-      });
+        updateNavbar(data.session);
+
+      } catch (error) {
+        console.error(
+          "Unable to check login status:",
+          error
+        );
+
+        showLoggedOutNavbar();
+      }
+
+      supabaseClient.auth.onAuthStateChange(
+        (_event, session) => {
+          updateNavbar(session);
+        }
+      );
+
+      logoutLink.addEventListener(
+        "click",
+        async function (event) {
+          event.preventDefault();
+
+          if (!supabaseClient) {
+            return;
+          }
+
+          const { error } =
+            await supabaseClient.auth.signOut();
+
+          if (error) {
+            console.error("Logout error:", error);
+
+            alert(
+              "Unable to log out. Please try again."
+            );
+
+            return;
+          }
+
+          window.location.replace("index.html");
+        }
+      );
     }
 
     initializeAuth();
