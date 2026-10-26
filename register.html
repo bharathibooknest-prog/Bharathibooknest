@@ -4,10 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BookNest - Phone Login</title>
+  <title>BharathiBookNest - Register & Login</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -24,14 +28,21 @@
     .container {
       width: 100%;
       max-width: 400px;
-      padding: 30px;
       background: white;
+      padding: 30px;
       border-radius: 14px;
       box-shadow: 0 5px 25px #0002;
     }
 
-    h1, h2 { text-align: center; }
-    h1 { color: #713d2b; }
+    h1 {
+      text-align: center;
+      color: #713d2b;
+      font-size: 27px;
+    }
+
+    h2 {
+      text-align: center;
+    }
 
     label {
       display: block;
@@ -47,6 +58,11 @@
       font-size: 16px;
     }
 
+    input:focus {
+      outline: 2px solid #b88a68;
+      outline-offset: 2px;
+    }
+
     button {
       width: 100%;
       padding: 12px;
@@ -59,11 +75,15 @@
       font-size: 16px;
     }
 
-    button:disabled { opacity: 0.6; }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
     .switch {
       text-align: center;
       margin-top: 18px;
+      line-height: 1.7;
     }
 
     .switch button {
@@ -76,6 +96,7 @@
     }
 
     #message {
+      text-align: center;
       overflow-wrap: anywhere;
       line-height: 1.5;
     }
@@ -87,229 +108,280 @@
       color: #713d2b;
     }
 
-    [hidden] { display: none !important; }
+    [hidden] {
+      display: none !important;
+    }
   </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
   <main class="container">
     <h1>BharathiBookNest</h1>
 
+    <!-- REGISTER -->
     <section id="registerSection">
       <h2>Create Account</h2>
 
       <form id="registerForm">
         <label for="regName">Full Name</label>
-        <input id="regName" type="text"
-          minlength="2" maxlength="80"
-          autocomplete="name" required>
+        <input
+          id="regName"
+          type="text"
+          autocomplete="name"
+          minlength="2"
+          maxlength="80"
+          required
+        >
 
-        <label for="regPhone">Mobile Number</label>
-        <input id="regPhone" type="tel"
-          placeholder="+919876543210"
-          pattern="\+[1-9][0-9]{7,14}"
-          autocomplete="tel" required>
+        <label for="regEmail">Email Address</label>
+        <input
+          id="regEmail"
+          type="email"
+          autocomplete="email"
+          maxlength="254"
+          placeholder="you@example.com"
+          required
+        >
+
+        <label for="regPassword">Create Password</label>
+        <input
+          id="regPassword"
+          type="password"
+          minlength="8"
+          maxlength="128"
+          autocomplete="new-password"
+          required
+        >
 
         <button type="submit" id="registerBtn">
-          Send OTP & Register
+          Sign Up
         </button>
       </form>
 
       <p class="switch">
-        Already registered?
+        Already have an account?
         <button type="button" id="showLogin">Login</button>
       </p>
     </section>
 
+    <!-- LOGIN -->
     <section id="loginSection" hidden>
       <h2>Login</h2>
 
       <form id="loginForm">
-        <label for="loginPhone">Mobile Number</label>
-        <input id="loginPhone" type="tel"
-          placeholder="+919876543210"
-          pattern="\+[1-9][0-9]{7,14}"
-          autocomplete="tel" required>
+        <label for="loginEmail">Email Address</label>
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="email"
+          required
+        >
+
+        <label for="loginPassword">Password</label>
+        <input
+          id="loginPassword"
+          type="password"
+          maxlength="128"
+          autocomplete="current-password"
+          required
+        >
 
         <button type="submit" id="loginBtn">
-          Send Login OTP
+          Login
         </button>
       </form>
 
       <p class="switch">
         New to BookNest?
-        <button type="button" id="showRegister">Register</button>
+        <button type="button" id="showRegister">Create Account</button>
       </p>
     </section>
 
-    <section id="otpSection" hidden>
-      <h2>Verify OTP</h2>
-      <p>Enter the verification code sent to your phone.</p>
-
-      <form id="otpForm">
-        <label for="otp">SMS verification code</label>
-        <input id="otp" type="text"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-          maxlength="10" required>
-
-        <button type="submit" id="verifyBtn">
-          Verify & Continue
-        </button>
-      </form>
-
-      <button type="button" id="backBtn">
-        Back
+    <!-- EMAIL CONFIRMATION MESSAGE -->
+    <section id="verifySection" hidden>
+      <h2>Verify Your Email</h2>
+      <p>
+        Signup request received. Check your email inbox and click
+        the verification link to confirm your account.
+      </p>
+      <p>
+        Email varavillai endraal Spam/Junk folder-ai check pannu.
+      </p>
+      <button type="button" id="backToLogin">
+        Go to Login
       </button>
     </section>
 
     <p id="message" role="status" aria-live="polite"></p>
+
     <a class="back" href="index.html">Back to Home</a>
   </main>
 
-  <script type="module">
-"use strict";
+  <script>
+    "use strict";
 
-const SUPABASE_URL =
-  "https://mlhveuqfxbpucorktost.supabase.co";
+    // Supabase connection
+    const SUPABASE_URL =
+      "https://mlhveuqfxbpucorktost.supabase.co";
 
-const SUPABASE_KEY =
-  "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
+    const SUPABASE_PUBLISHABLE_KEY =
+      "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+    const supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
 
-const registerSection =
-  document.getElementById("registerSection");
+    const registerSection =
+      document.getElementById("registerSection");
 
-const loginSection =
-  document.getElementById("loginSection");
+    const loginSection =
+      document.getElementById("loginSection");
 
-const message = document.getElementById("message");
+    const verifySection =
+      document.getElementById("verifySection");
 
-const registerForm =
-  document.getElementById("registerForm");
+    const message =
+      document.getElementById("message");
 
-const loginForm =
-  document.getElementById("loginForm");
+    const registerForm =
+      document.getElementById("registerForm");
 
-document.getElementById("showLogin").onclick = function () {
-  registerSection.hidden = true;
-  loginSection.hidden = false;
-  message.textContent = "";
-};
+    const loginForm =
+      document.getElementById("loginForm");
 
-document.getElementById("showRegister").onclick = function () {
-  loginSection.hidden = true;
-  registerSection.hidden = false;
-  message.textContent = "";
-};
+    const registerBtn =
+      document.getElementById("registerBtn");
 
-// REGISTER
-registerForm.addEventListener("submit", async function (event) {
-  event.preventDefault();
+    const loginBtn =
+      document.getElementById("loginBtn");
 
-  if (!registerForm.reportValidity()) return;
+    function showSection(section) {
+      registerSection.hidden = section !== registerSection;
+      loginSection.hidden = section !== loginSection;
+      verifySection.hidden = section !== verifySection;
+      message.textContent = "";
+    }
 
-  const name = document.getElementById("regName").value.trim();
-  const phone = document.getElementById("regPhone").value.trim();
-  const password =
-    document.getElementById("regPassword").value;
+    document.getElementById("showLogin").addEventListener(
+      "click", () => showSection(loginSection)
+    );
 
-  const button = document.getElementById("registerBtn");
-  button.disabled = true;
-  message.textContent = "Creating account...";
+    document.getElementById("showRegister").addEventListener(
+      "click", () => showSection(registerSection)
+    );
 
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      phone: phone,
-      password: password,
-      options: {
-        data: {
-          full_name: name
+    document.getElementById("backToLogin").addEventListener(
+      "click", () => showSection(loginSection)
+    );
+
+    // SIGNUP + EMAIL VERIFICATION
+    registerForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (!registerForm.reportValidity()) return;
+
+      const name =
+        document.getElementById("regName").value.trim();
+
+      const email =
+        document.getElementById("regEmail").value.trim();
+
+      const password =
+        document.getElementById("regPassword").value;
+
+      registerBtn.disabled = true;
+      registerBtn.textContent = "Creating Account...";
+      message.textContent = "Please wait...";
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name
+            },
+            emailRedirectTo:
+              "https://bharathibooknest-prog.github.io/Bharathibooknest/"
+          }
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+          message.textContent =
+            "Account created successfully! Opening BookNest...";
+
+          window.location.href = "./index.html";
+          return;
         }
+
+        showSection(verifySection);
+        message.textContent =
+          "Check your email to verify your account.";
+
+      } catch (error) {
+        message.textContent =
+          error.message || "Signup failed. Please try again.";
+      } finally {
+        registerBtn.disabled = false;
+        registerBtn.textContent = "Sign Up";
       }
     });
 
-    if (error) throw error;
+    // LOGIN
+    loginForm.addEventListener("submit", async event => {
+      event.preventDefault();
 
-    // If phone verification is enabled, request the SMS OTP.
-    if (data.user && !data.session) {
-      const otp = prompt(
-        "Enter the verification code sent to your phone:"
-      );
+      if (!loginForm.reportValidity()) return;
 
-      if (!otp) {
+      const email =
+        document.getElementById("loginEmail").value.trim();
+
+      const password =
+        document.getElementById("loginPassword").value;
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Logging In...";
+      message.textContent = "Please wait...";
+
+      try {
+        const { data, error } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+
+        if (error) throw error;
+
+        if (!data.session) {
+          throw new Error(
+            "Login session was not created. Please try again."
+          );
+        }
+
+        window.location.href = "./index.html";
+
+      } catch (error) {
         message.textContent =
-          "Account created. Verify your phone before logging in.";
-        return;
+          error.message || "Login failed. Please try again.";
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
       }
+    });
 
-      const { error: verifyError } =
-        await supabase.auth.verifyOtp({
-          phone: phone,
-          token: otp.trim(),
-          type: "sms"
-        });
+    // Check existing session
+    async function checkSession() {
+      const { data, error } = await supabase.auth.getSession();
 
-      if (verifyError) throw verifyError;
+      if (!error && data.session) {
+        window.location.href = "./index.html";
+      }
     }
 
-    message.textContent =
-      "Registration successful! You can now log in.";
-
-    document.getElementById("loginPhone").value = phone;
-    document.getElementById("loginPassword").value = "";
-
-    registerForm.reset();
-    registerSection.hidden = true;
-    loginSection.hidden = false;
-
-  } catch (error) {
-    message.textContent = error.message;
-  } finally {
-    button.disabled = false;
-  }
-});
-
-// LOGIN
-loginForm.addEventListener("submit", async function (event) {
-  event.preventDefault();
-
-  if (!loginForm.reportValidity()) return;
-
-  const phone = document.getElementById("loginPhone").value.trim();
-  const password =
-    document.getElementById("loginPassword").value;
-
-  const button = document.getElementById("loginBtn");
-  button.disabled = true;
-  message.textContent = "Logging in...";
-
-  try {
-    const { data, error } =
-      await supabase.auth.signInWithPassword({
-        phone: phone,
-        password: password
-      });
-
-    if (error) throw error;
-
-    message.textContent = "Login successful!";
-
-    window.location.href = "index.html";
-
-  } catch (error) {
-    message.textContent =
-      error.message || "Login failed. Please try again.";
-  } finally {
-    button.disabled = false;
-  }
-});
-
+    checkSession();
   </script>
 </body>
 </html>
