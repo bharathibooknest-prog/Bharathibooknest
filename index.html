@@ -138,7 +138,7 @@
       display: none !important;
     }
 
-    /* Login popup */
+    /* Login and Forgot Password popup */
     .modal {
       position: fixed;
       inset: 0;
@@ -148,16 +148,17 @@
       justify-content: center;
       padding: 20px;
       background: rgba(0, 0, 0, 0.65);
+      overflow-y: auto;
     }
 
     .modal-content {
+      position: relative;
       width: 100%;
       max-width: 400px;
       padding: 30px;
       background: #fff8ef;
       border-radius: 12px;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-      position: relative;
     }
 
     .modal-content h2 {
@@ -167,7 +168,7 @@
       color: #713d2b;
     }
 
-    .modal-content .description {
+    .description {
       text-align: center;
       margin-bottom: 20px;
     }
@@ -206,6 +207,18 @@
       outline-offset: 1px;
     }
 
+    .forgot-row {
+      text-align: right;
+      margin: 0 0 16px;
+    }
+
+    .forgot-row a,
+    .signup-text a,
+    .back-link {
+      color: #8b4513;
+      font-weight: bold;
+    }
+
     .submit-btn {
       width: 100%;
       padding: 12px;
@@ -240,11 +253,6 @@
     .signup-text {
       margin-top: 20px;
       text-align: center;
-    }
-
-    .signup-text a {
-      color: #8b4513;
-      font-weight: bold;
     }
 
     .contact {
@@ -301,7 +309,7 @@
       }
 
       .modal-content {
-        padding: 25px 20px;
+        padding: 28px 20px;
       }
 
       .contact {
@@ -361,8 +369,12 @@
       >&times;</button>
 
       <h2 id="loginTitle">Welcome Back!</h2>
-      <p class="description">Login to your BharathiBookNest account.</p>
 
+      <p class="description" id="loginDescription">
+        Login to your BharathiBookNest account.
+      </p>
+
+      <!-- Login form -->
       <form id="loginForm">
         <div class="form-group">
           <label for="loginEmail">Email Address</label>
@@ -388,6 +400,10 @@
           >
         </div>
 
+        <p class="forgot-row">
+          <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+        </p>
+
         <button type="submit" class="submit-btn" id="loginSubmit">
           Login
         </button>
@@ -400,7 +416,46 @@
         ></p>
       </form>
 
-      <p class="signup-text">
+      <!-- Forgot Password form -->
+      <form id="forgotPasswordForm" hidden>
+        <p>
+          Enter your registered email address. If an account exists,
+          we'll send instructions to reset your password.
+        </p>
+
+        <div class="form-group">
+          <label for="resetEmail">Email Address</label>
+          <input
+            type="email"
+            id="resetEmail"
+            name="resetEmail"
+            placeholder="Enter your registered email"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <button
+          type="submit"
+          class="submit-btn"
+          id="resetEmailButton"
+        >
+          Send Reset Link
+        </button>
+
+        <p
+          class="form-message"
+          id="resetMessage"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+        <p class="signup-text">
+          <a href="#" id="backToLogin">Back to Login</a>
+        </p>
+      </form>
+
+      <p class="signup-text" id="signupText">
         Don't have an account?
         <a href="register.html">Sign Up</a>
       </p>
@@ -446,7 +501,26 @@
     const loginSubmit = document.getElementById("loginSubmit");
     const loginMessage = document.getElementById("loginMessage");
 
-    // Show or hide navigation based on session
+    // Forgot Password elements
+    const forgotPasswordLink =
+      document.getElementById("forgotPasswordLink");
+
+    const forgotPasswordForm =
+      document.getElementById("forgotPasswordForm");
+
+    const resetEmail = document.getElementById("resetEmail");
+    const resetEmailButton =
+      document.getElementById("resetEmailButton");
+
+    const resetMessage = document.getElementById("resetMessage");
+    const backToLogin = document.getElementById("backToLogin");
+
+    const loginDescription =
+      document.getElementById("loginDescription");
+
+    const signupText = document.getElementById("signupText");
+
+    // Update navigation based on login status
     function updateNavbar(isLoggedIn) {
       loginLink.hidden = isLoggedIn;
       registerLink.hidden = isLoggedIn;
@@ -462,35 +536,43 @@
     loginLink.addEventListener("click", function(event) {
       event.preventDefault();
 
+      loginForm.hidden = false;
+      forgotPasswordForm.hidden = true;
+      loginDescription.hidden = false;
+      signupText.hidden = false;
+
       loginMessage.textContent = "";
+      resetMessage.textContent = "";
+
       loginModal.hidden = false;
       loginEmail.focus();
     });
 
-    // Close popup
+    // Close login popup
     function closeLoginModal() {
       loginModal.hidden = true;
       loginMessage.textContent = "";
+      resetMessage.textContent = "";
       loginLink.focus();
     }
 
     closeLogin.addEventListener("click", closeLoginModal);
 
-    // Close when clicking outside the form
+    // Close when clicking outside the popup
     loginModal.addEventListener("click", function(event) {
       if (event.target === loginModal) {
         closeLoginModal();
       }
     });
 
-    // Close popup with Escape key
+    // Close popup with Escape
     document.addEventListener("keydown", function(event) {
       if (event.key === "Escape" && !loginModal.hidden) {
         closeLoginModal();
       }
     });
 
-    // Login using Supabase email and password
+    // Login using Supabase
     loginForm.addEventListener("submit", async function(event) {
       event.preventDefault();
 
@@ -520,23 +602,90 @@
         updateNavbar(true);
         loginForm.reset();
 
-        // Stay on the homepage after successful login.
-        loginModal.hidden = true;
-
       } catch (error) {
         console.error("Login failed:", error.message);
 
         loginMessage.textContent =
-          error.message === "Invalid login credentials"
-            ? "Incorrect email or password. Please try again."
-            : error.message;
+          "Login failed. Check your email and password, and make sure your email is verified if verification is enabled.";
       } finally {
         loginSubmit.disabled = false;
         loginSubmit.textContent = "Login";
       }
     });
 
-    // Check the existing Supabase session
+    // Show Forgot Password form
+    forgotPasswordLink.addEventListener("click", function(event) {
+      event.preventDefault();
+
+      resetEmail.value = loginEmail.value.trim();
+
+      loginForm.hidden = true;
+      forgotPasswordForm.hidden = false;
+      loginDescription.hidden = true;
+      signupText.hidden = true;
+
+      loginMessage.textContent = "";
+      resetMessage.textContent = "";
+
+      resetEmail.focus();
+    });
+
+    // Return to Login form
+    backToLogin.addEventListener("click", function(event) {
+      event.preventDefault();
+
+      forgotPasswordForm.hidden = true;
+      loginForm.hidden = false;
+      loginDescription.hidden = false;
+      signupText.hidden = false;
+
+      resetMessage.textContent = "";
+      loginEmail.focus();
+    });
+
+    // Request password reset email
+    forgotPasswordForm.addEventListener(
+      "submit",
+      async function(event) {
+        event.preventDefault();
+
+        resetEmailButton.disabled = true;
+        resetEmailButton.textContent = "Sending...";
+        resetMessage.textContent = "";
+
+        try {
+          const { error } =
+            await supabaseClient.auth.resetPasswordForEmail(
+              resetEmail.value.trim(),
+              {
+                redirectTo:
+                  "https://bharathibooknest-prog.github.io/Bharathibooknest/reset-password.html"
+              }
+            );
+
+          if (error) {
+            throw error;
+          }
+
+          resetMessage.textContent =
+            "If an account exists for this email, a reset link will be sent. Check your inbox and spam folder.";
+
+        } catch (error) {
+          console.error(
+            "Password reset request failed:",
+            error.message
+          );
+
+          resetMessage.textContent =
+            "Unable to send the reset email. Please try again.";
+        } finally {
+          resetEmailButton.disabled = false;
+          resetEmailButton.textContent = "Send Reset Link";
+        }
+      }
+    );
+
+    // Check current Supabase session
     async function checkLoginStatus() {
       try {
         const { data, error } =
@@ -549,12 +698,16 @@
         updateNavbar(Boolean(data.session));
 
       } catch (error) {
-        console.error("Unable to check login status:", error.message);
+        console.error(
+          "Unable to check login status:",
+          error.message
+        );
+
         updateNavbar(false);
       }
     }
 
-    // Keep the navbar synchronized with Supabase
+    // Update navbar when auth state changes
     supabaseClient.auth.onAuthStateChange(
       function(event, session) {
         updateNavbar(Boolean(session));
