@@ -91,6 +91,7 @@
       background-color: #d8b48a;
       color: #30251f;
       border: 1px solid #8b4513;
+      cursor: pointer;
     }
 
     nav a.login-btn:hover {
@@ -124,10 +125,7 @@
     nav a.logout-btn {
       background-color: #a33b32;
       color: white;
-      border: none;
       cursor: pointer;
-      font: inherit;
-      font-weight: bold;
     }
 
     nav a.logout-btn:hover {
@@ -138,6 +136,115 @@
 
     [hidden] {
       display: none !important;
+    }
+
+    /* Login popup */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.65);
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      background: #fff8ef;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #713d2b;
+    }
+
+    .modal-content .description {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      border: none;
+      background: transparent;
+      color: #30251f;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #bca58e;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .form-group input:focus {
+      outline: 2px solid #8b4513;
+      outline-offset: 1px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #8b4513;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background: #5c2e0b;
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .form-message {
+      margin-top: 15px;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .form-message:empty {
+      display: none;
+    }
+
+    .signup-text {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .signup-text a {
+      color: #8b4513;
+      font-weight: bold;
     }
 
     .contact {
@@ -193,6 +300,10 @@
         padding: 9px 12px;
       }
 
+      .modal-content {
+        padding: 25px 20px;
+      }
+
       .contact {
         position: relative;
         margin-top: 80px;
@@ -212,9 +323,9 @@
       <a href="index.html">Home</a>
       <a href="books.html">Books</a>
       <a href="cart.html">My Cart</a>
-      <a href="contact">Contact</a>
+      <a href="index.html#contact">Contact</a>
 
-      <a href="login.html" class="login-btn" id="loginLink">
+      <a href="#" class="login-btn" id="loginLink">
         Login
       </a>
 
@@ -232,13 +343,77 @@
     </nav>
   </header>
 
+  <!-- Login popup -->
+  <div
+    class="modal"
+    id="loginModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="loginTitle"
+    hidden
+  >
+    <div class="modal-content">
+      <button
+        type="button"
+        class="close-btn"
+        id="closeLogin"
+        aria-label="Close login"
+      >&times;</button>
+
+      <h2 id="loginTitle">Welcome Back!</h2>
+      <p class="description">Login to your BharathiBookNest account.</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input
+            type="email"
+            id="loginEmail"
+            name="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input
+            type="password"
+            id="loginPassword"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="submit-btn" id="loginSubmit">
+          Login
+        </button>
+
+        <p
+          class="form-message"
+          id="loginMessage"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </form>
+
+      <p class="signup-text">
+        Don't have an account?
+        <a href="register.html">Sign Up</a>
+      </p>
+    </div>
+  </div>
+
   <section class="contact" id="contact">
     <h2>Contact BookNest</h2>
     <p>Email: bharathibooknest@gmail.com</p>
     <p>Online Book Store</p>
   </section>
 
-  <!-- Supabase JavaScript library -->
+  <!-- Supabase library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -262,15 +437,106 @@
     const profileLink = document.getElementById("profileLink");
     const logoutLink = document.getElementById("logoutLink");
 
-    // Show navigation based on authentication status
+    // Login popup elements
+    const loginModal = document.getElementById("loginModal");
+    const closeLogin = document.getElementById("closeLogin");
+    const loginForm = document.getElementById("loginForm");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginSubmit = document.getElementById("loginSubmit");
+    const loginMessage = document.getElementById("loginMessage");
+
+    // Show or hide navigation based on session
     function updateNavbar(isLoggedIn) {
       loginLink.hidden = isLoggedIn;
       registerLink.hidden = isLoggedIn;
       profileLink.hidden = !isLoggedIn;
       logoutLink.hidden = !isLoggedIn;
+
+      if (isLoggedIn) {
+        loginModal.hidden = true;
+      }
     }
 
-    // Check the current Supabase session
+    // Open login popup
+    loginLink.addEventListener("click", function(event) {
+      event.preventDefault();
+
+      loginMessage.textContent = "";
+      loginModal.hidden = false;
+      loginEmail.focus();
+    });
+
+    // Close popup
+    function closeLoginModal() {
+      loginModal.hidden = true;
+      loginMessage.textContent = "";
+      loginLink.focus();
+    }
+
+    closeLogin.addEventListener("click", closeLoginModal);
+
+    // Close when clicking outside the form
+    loginModal.addEventListener("click", function(event) {
+      if (event.target === loginModal) {
+        closeLoginModal();
+      }
+    });
+
+    // Close popup with Escape key
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape" && !loginModal.hidden) {
+        closeLoginModal();
+      }
+    });
+
+    // Login using Supabase email and password
+    loginForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      loginSubmit.disabled = true;
+      loginSubmit.textContent = "Logging in...";
+      loginMessage.textContent = "";
+
+      try {
+        const { data, error } =
+          await supabaseClient.auth.signInWithPassword({
+            email: loginEmail.value.trim(),
+            password: loginPassword.value
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data.session) {
+          loginMessage.textContent =
+            "Login was not completed. Please try again.";
+          return;
+        }
+
+        loginMessage.textContent = "Login successful!";
+
+        updateNavbar(true);
+        loginForm.reset();
+
+        // Stay on the homepage after successful login.
+        loginModal.hidden = true;
+
+      } catch (error) {
+        console.error("Login failed:", error.message);
+
+        loginMessage.textContent =
+          error.message === "Invalid login credentials"
+            ? "Incorrect email or password. Please try again."
+            : error.message;
+      } finally {
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = "Login";
+      }
+    });
+
+    // Check the existing Supabase session
     async function checkLoginStatus() {
       try {
         const { data, error } =
@@ -288,14 +554,14 @@
       }
     }
 
-    // Listen for login, logout, and other auth changes
+    // Keep the navbar synchronized with Supabase
     supabaseClient.auth.onAuthStateChange(
-      (event, session) => {
+      function(event, session) {
         updateNavbar(Boolean(session));
       }
     );
 
-    // Logout the current user
+    // Logout
     logoutLink.addEventListener("click", async function(event) {
       event.preventDefault();
 
@@ -320,7 +586,7 @@
       }
     });
 
-    // Run when the homepage opens
+    // Initialize navigation
     checkLoginStatus();
   </script>
 </body>
