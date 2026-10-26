@@ -1,14 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BookNest - Register & Login</title>
+  <title>BookNest - Phone Login</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -25,20 +24,14 @@
     .container {
       width: 100%;
       max-width: 400px;
-      background: white;
       padding: 30px;
+      background: white;
       border-radius: 14px;
       box-shadow: 0 5px 25px #0002;
     }
 
-    h1 {
-      text-align: center;
-      color: #713d2b;
-    }
-
-    h2 {
-      text-align: center;
-    }
+    h1, h2 { text-align: center; }
+    h1 { color: #713d2b; }
 
     label {
       display: block;
@@ -54,11 +47,6 @@
       font-size: 16px;
     }
 
-    input:focus {
-      outline: 2px solid #b88a68;
-      outline-offset: 2px;
-    }
-
     button {
       width: 100%;
       padding: 12px;
@@ -71,10 +59,7 @@
       font-size: 16px;
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    button:disabled { opacity: 0.6; }
 
     .switch {
       text-align: center;
@@ -91,8 +76,8 @@
     }
 
     #message {
-      text-align: center;
       overflow-wrap: anywhere;
+      line-height: 1.5;
     }
 
     .back {
@@ -102,9 +87,7 @@
       color: #713d2b;
     }
 
-    [hidden] {
-      display: none !important;
-    }
+    [hidden] { display: none !important; }
   </style>
 </head>
 
@@ -112,80 +95,45 @@
   <main class="container">
     <h1>BharathiBookNest</h1>
 
-    <!-- REGISTER -->
     <section id="registerSection">
       <h2>Create Account</h2>
 
       <form id="registerForm">
         <label for="regName">Full Name</label>
-        <input
-          id="regName"
-          type="text"
-          autocomplete="name"
-          minlength="2"
-          maxlength="80"
-          required
-        >
+        <input id="regName" type="text"
+          minlength="2" maxlength="80"
+          autocomplete="name" required>
 
         <label for="regPhone">Mobile Number</label>
-        <input
-          id="regPhone"
-          type="tel"
+        <input id="regPhone" type="tel"
           placeholder="+919876543210"
-          autocomplete="tel"
           pattern="\+[1-9][0-9]{7,14}"
-          title="Enter country code and number, e.g. +919876543210"
-          maxlength="16"
-          required
-        >
-
-        <label for="regPassword">Create Password</label>
-        <input
-          id="regPassword"
-          type="password"
-          minlength="8"
-          maxlength="128"
-          autocomplete="new-password"
-          required
-        >
+          autocomplete="tel" required>
 
         <button type="submit" id="registerBtn">
-          Register
+          Send OTP & Register
         </button>
       </form>
 
       <p class="switch">
-        Already have an account?
+        Already registered?
         <button type="button" id="showLogin">Login</button>
       </p>
     </section>
 
-    <!-- LOGIN -->
     <section id="loginSection" hidden>
       <h2>Login</h2>
 
       <form id="loginForm">
         <label for="loginPhone">Mobile Number</label>
-        <input
-          id="loginPhone"
-          type="tel"
+        <input id="loginPhone" type="tel"
           placeholder="+919876543210"
-          autocomplete="tel"
           pattern="\+[1-9][0-9]{7,14}"
-          maxlength="16"
-          required
-        >
+          autocomplete="tel" required>
 
-        <label for="loginPassword">Password</label>
-        <input
-          id="loginPassword"
-          type="password"
-          maxlength="128"
-          autocomplete="current-password"
-          required
-        >
-
-        <button type="submit" id="loginBtn">Login</button>
+        <button type="submit" id="loginBtn">
+          Send Login OTP
+        </button>
       </form>
 
       <p class="switch">
@@ -194,191 +142,197 @@
       </p>
     </section>
 
+    <section id="otpSection" hidden>
+      <h2>Verify OTP</h2>
+      <p>Enter the verification code sent to your phone.</p>
+
+      <form id="otpForm">
+        <label for="otp">SMS verification code</label>
+        <input id="otp" type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          maxlength="10" required>
+
+        <button type="submit" id="verifyBtn">
+          Verify & Continue
+        </button>
+      </form>
+
+      <button type="button" id="backBtn">
+        Back
+      </button>
+    </section>
+
     <p id="message" role="status" aria-live="polite"></p>
     <a class="back" href="index.html">Back to Home</a>
   </main>
 
-  <script>
-    "use strict";
+  <script type="module">
+    import { createClient } from
+      "https://esm.sh/@supabase/supabase-js@2";
 
-    const registerSection =
-      document.getElementById("registerSection");
+    const SUPABASE_URL =
+      "https://mlhveuqfxbpucorktost.supabase.co";
 
-    const loginSection =
-      document.getElementById("loginSection");
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
 
-    const message =
-      document.getElementById("message");
-
-    const registerForm =
-      document.getElementById("registerForm");
-
-    const loginForm =
-      document.getElementById("loginForm");
-
-    const registerBtn =
-      document.getElementById("registerBtn");
-
-    const loginBtn =
-      document.getElementById("loginBtn");
-
-    const regName = document.getElementById("regName");
-    const regPhone = document.getElementById("regPhone");
-    const regPassword = document.getElementById("regPassword");
-
-    const loginPhone = document.getElementById("loginPhone");
-    const loginPassword = document.getElementById("loginPassword");
-
-    // Switch to login form.
-    document.getElementById("showLogin").addEventListener(
-      "click",
-      function () {
-        registerSection.hidden = true;
-        loginSection.hidden = false;
-        message.textContent = "";
-      }
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
     );
 
-    // Switch to registration form.
-    document.getElementById("showRegister").addEventListener(
-      "click",
-      function () {
-        loginSection.hidden = true;
-        registerSection.hidden = false;
-        message.textContent = "";
-      }
-    );
+    const $ = id => document.getElementById(id);
 
-    function normalizePhone(value) {
-      return value.trim();
+    const registerSection = $("registerSection");
+    const loginSection = $("loginSection");
+    const otpSection = $("otpSection");
+    const message = $("message");
+
+    let currentPhone = "";
+    let currentMode = "register";
+
+    function showMessage(text) {
+      message.textContent = text;
     }
 
-    // Send JSON requests to the BookNest backend.
-    async function sendRequest(url, payload) {
-      let response;
-
-      try {
-        response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          credentials: "same-origin",
-          body: JSON.stringify(payload)
-        });
-      } catch (error) {
-        console.error("Network request failed:", error);
-
-        throw new Error(
-          "Server connection failed. Open BookNest using http://localhost:3000/register.html and check that server.js is running."
-        );
-      }
-
-      const contentType =
-        response.headers.get("content-type") || "";
-
-      let data;
-
-      try {
-        data = await response.json();
-      } catch (error) {
-        console.error("Invalid server response:", error);
-
-        throw new Error(
-          "Server returned an invalid response. Check the server terminal and server.js."
-        );
-      }
-
-      if (!contentType.includes("application/json")) {
-        throw new Error(
-          "Expected a JSON response from the server. Check server.js."
-        );
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Request failed. Please try again."
-        );
-      }
-
-      return data;
+    function showSection(section) {
+      registerSection.hidden = section !== registerSection;
+      loginSection.hidden = section !== loginSection;
+      otpSection.hidden = section !== otpSection;
     }
 
-    // REGISTER
-    registerForm.addEventListener("submit", async function (event) {
+    function setBusy(button, busy, text) {
+      button.disabled = busy;
+      if (busy) button.textContent = text;
+    }
+
+    $("showLogin").addEventListener("click", () => {
+      showSection(loginSection);
+      showMessage("");
+    });
+
+    $("showRegister").addEventListener("click", () => {
+      showSection(registerSection);
+      showMessage("");
+    });
+
+    $("backBtn").addEventListener("click", () => {
+      showSection(
+        currentMode === "register"
+          ? registerSection
+          : loginSection
+      );
+      showMessage("");
+    });
+
+    async function sendOTP(phone, mode, name = "") {
+      currentPhone = phone;
+      currentMode = mode;
+
+      const options = mode === "register"
+        ? {
+            shouldCreateUser: true,
+            data: { full_name: name }
+          }
+        : {
+            shouldCreateUser: false
+          };
+
+      const { error } = await supabase.auth.signInWithOtp({
+        phone,
+        options
+      });
+
+      if (error) throw error;
+
+      showSection(otpSection);
+      showMessage(
+        "OTP request sent. Check your phone for the code."
+      );
+    }
+
+    $("registerForm").addEventListener("submit", async event => {
       event.preventDefault();
 
-      if (!registerForm.reportValidity()) return;
+      if (!event.currentTarget.reportValidity()) return;
 
-      const name = regName.value.trim();
-      const phone = normalizePhone(regPhone.value);
-      const password = regPassword.value;
+      const name = $("regName").value.trim();
+      const phone = $("regPhone").value.trim();
+      const button = $("registerBtn");
 
-      if (name.length < 2) {
-        message.textContent = "Please enter your full name.";
-        return;
-      }
-
-      registerBtn.disabled = true;
-      message.textContent = "Creating account...";
+      setBusy(button, true, "Sending OTP...");
+      showMessage("Please wait...");
 
       try {
-        const data = await sendRequest("/api/register", {
-          name: name,
-          phone: phone,
-          password: password
-        });
-
-        message.textContent =
-          data.message || "Registration successful!";
-
-        loginPhone.value = phone;
-        loginPassword.value = "";
-
-        registerForm.reset();
-        registerSection.hidden = true;
-        loginSection.hidden = false;
-
+        await sendOTP(phone, "register", name);
       } catch (error) {
-        message.textContent =
-          error.message || "Registration failed.";
+        showMessage("Signup error: " + error.message);
       } finally {
-        registerBtn.disabled = false;
+        setBusy(button, false, "Send OTP & Register");
       }
     });
 
-    // LOGIN
-    loginForm.addEventListener("submit", async function (event) {
+    $("loginForm").addEventListener("submit", async event => {
       event.preventDefault();
 
-      if (!loginForm.reportValidity()) return;
+      if (!event.currentTarget.reportValidity()) return;
 
-      const phone = normalizePhone(loginPhone.value);
-      const password = loginPassword.value;
+      const phone = $("loginPhone").value.trim();
+      const button = $("loginBtn");
 
-      loginBtn.disabled = true;
-      message.textContent = "Logging in...";
+      setBusy(button, true, "Sending OTP...");
+      showMessage("Please wait...");
 
       try {
-        const data = await sendRequest("/api/login", {
-          phone: phone,
-          password: password
-        });
-
-        message.textContent =
-          data.message || "Login successful!";
-
-        // Navigate only after the server confirms login.
-        window.location.replace("/index.html");
-
+        await sendOTP(phone, "login");
       } catch (error) {
-        message.textContent =
-          error.message || "Login failed.";
+        showMessage("Login error: " + error.message);
       } finally {
-        loginBtn.disabled = false;
+        setBusy(button, false, "Send Login OTP");
       }
     });
+
+    $("otpForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (!event.currentTarget.reportValidity()) return;
+
+      const token = $("otp").value.trim();
+      const button = $("verifyBtn");
+
+      setBusy(button, true, "Verifying...");
+      showMessage("Verifying OTP...");
+
+      try {
+        const { data, error } =
+          await supabase.auth.verifyOtp({
+            phone: currentPhone,
+            token,
+            type: "sms"
+          });
+
+        if (error) throw error;
+        if (!data.session) {
+          throw new Error("No login session received. Try again.");
+        }
+
+        showMessage("Verification successful! Opening BookNest...");
+        window.location.replace("./index.html");
+      } catch (error) {
+        showMessage("Verification error: " + error.message);
+      } finally {
+        setBusy(button, false, "Verify & Continue");
+      }
+    });
+
+    // Restore the user's saved session when this page opens.
+    const { data: { session } } =
+      await supabase.auth.getSession();
+
+    if (session) {
+      window.location.replace("./index.html");
+    }
   </script>
 </body>
 </html>
