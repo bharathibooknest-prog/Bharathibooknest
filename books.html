@@ -330,103 +330,66 @@
   </footer>
 
   <!-- SUPABASE AUTHENTICATION -->
-  <script>
-    "use strict";
+ 
+<script>
+  const SUPABASE_URL =
+    "https://mlhveuqfxbpucorktost.supabase.co";
 
-    const SUPABASE_URL =
-      "https://mlhveuqfxbpucorktost.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
 
-    const loginLink = document.getElementById("loginLink");
-    const registerLink = document.getElementById("registerLink");
-    const profileLink = document.getElementById("profileLink");
-    const logoutLink = document.getElementById("logoutLink");
+  const loginLink = document.getElementById("loginLink");
+  const registerLink = document.getElementById("registerLink");
+  const profileLink = document.getElementById("profileLink");
+  const logoutLink = document.getElementById("logoutLink");
 
-    let supabaseClient = null;
+  function updateNavbar(session) {
+    const loggedIn = Boolean(session?.user);
 
-    function showLoggedOutNavbar() {
-      loginLink.hidden = false;
-      registerLink.hidden = false;
-      profileLink.hidden = true;
-      logoutLink.hidden = true;
+    loginLink.hidden = loggedIn;
+    registerLink.hidden = loggedIn;
+    profileLink.hidden = !loggedIn;
+    logoutLink.hidden = !loggedIn;
+  }
+
+  async function checkLogin() {
+    const { data, error } =
+      await supabaseClient.auth.getSession();
+
+    if (error) {
+      console.error("Session error:", error);
+      return;
     }
 
-    function updateNavbar(session) {
-      const loggedIn = Boolean(session && session.user);
+    updateNavbar(data.session);
+  }
 
-      loginLink.hidden = loggedIn;
-      registerLink.hidden = loggedIn;
-      profileLink.hidden = !loggedIn;
-      logoutLink.hidden = !loggedIn;
+  supabaseClient.auth.onAuthStateChange(
+    (_event, session) => {
+      updateNavbar(session);
+    }
+  );
+
+  logoutLink.addEventListener("click", async (event) => {
+    event.preventDefault();
+
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+      alert("Logout failed. Please try again.");
+      console.error(error);
+      return;
     }
 
-    async function initializeAuth() {
-      if (!window.supabase) {
-        console.error("Supabase library failed to load.");
-        showLoggedOutNavbar();
-        return;
-      }
+    window.location.href = "index.html";
+  });
 
-      if (
-        !SUPABASE_PUBLISHABLE_KEY ||
-        SUPABASE_PUBLISHABLE_KEY ===
-          "YOUR_SUPABASE_PUBLISHABLE_KEY"
-      ) {
-        console.error("Supabase publishable key is missing.");
-        showLoggedOutNavbar();
-        return;
-      }
-
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
-
-      try {
-        const { data, error } =
-          await supabaseClient.auth.getSession();
-
-        if (error) {
-          throw error;
-        }
-
-        updateNavbar(data.session);
-
-      } catch (error) {
-        console.error("Login status error:", error);
-        showLoggedOutNavbar();
-      }
-
-      supabaseClient.auth.onAuthStateChange(
-        (_event, session) => {
-          updateNavbar(session);
-        }
-      );
-
-      logoutLink.addEventListener("click", async function (event) {
-        event.preventDefault();
-
-        if (!supabaseClient) {
-          return;
-        }
-
-        const { error } = await supabaseClient.auth.signOut();
-
-        if (error) {
-          console.error("Logout error:", error);
-          alert("Unable to log out. Please try again.");
-          return;
-        }
-
-        window.location.replace("index.html");
-      });
-    }
-
-    initializeAuth();
-  </script>
-
+  checkLogin();
+</script>
 </body>
 </html>
-```
