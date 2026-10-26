@@ -7,7 +7,13 @@
   <title>BharathiBookNest - My Cart</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
 
     body {
       margin: 0;
@@ -100,10 +106,6 @@
     .logout-btn {
       background: #a33b32;
       color: white;
-    }
-
-    [hidden] {
-      display: none !important;
     }
 
     .cart-container {
@@ -253,7 +255,9 @@
       text-align: center;
     }
 
-    footer p { margin: 5px; }
+    footer p {
+      margin: 5px;
+    }
 
     @media (max-width: 700px) {
       header {
@@ -266,11 +270,17 @@
         height: 50px;
       }
 
-      .brand h1 { font-size: 21px; }
+      .brand h1 {
+        font-size: 21px;
+      }
 
-      nav { gap: 14px; }
+      nav {
+        gap: 14px;
+      }
 
-      .auth-buttons { width: 100%; }
+      .auth-buttons {
+        width: 100%;
+      }
 
       .cart-container {
         margin: 20px 12px;
@@ -295,11 +305,17 @@
         min-width: 0;
       }
 
-      #total { font-size: 20px; }
+      #total {
+        font-size: 20px;
+      }
 
-      .cart-footer-actions { flex-direction: column; }
+      .cart-footer-actions {
+        flex-direction: column;
+      }
 
-      .continue-shopping, .checkout-btn { width: 100%; }
+      .continue-shopping, .checkout-btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -328,11 +344,13 @@
         Register
       </a>
 
-      <a href="profile.html" class="auth-btn profile-btn" id="profileLink" hidden>
+      <a href="profile.html" class="auth-btn profile-btn"
+         id="profileLink" hidden>
         My Profile
       </a>
 
-      <button type="button" class="auth-btn logout-btn" id="logoutButton" hidden>
+      <button type="button" class="auth-btn logout-btn"
+              id="logoutButton" hidden>
         Logout
       </button>
     </div>
@@ -350,7 +368,8 @@
         Continue Shopping
       </a>
 
-      <button type="button" class="checkout-btn" id="checkoutBtn" disabled>
+      <button type="button" class="checkout-btn"
+              id="checkoutBtn" disabled>
         Proceed to Checkout →
       </button>
     </div>
@@ -359,6 +378,7 @@
   <footer id="contact">
     <p>📚 BharathiBookNest - Your Online Book Store</p>
     <p>&copy; 2026 BharathiBookNest. All rights reserved.</p>
+    <p>Contact: bharathibooknest@gmail.com</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -366,7 +386,7 @@
   <script>
     "use strict";
 
-    // Use the same Supabase project and publishable key as index.html.
+    // SUPABASE CONFIGURATION
     const SUPABASE_URL =
       "https://mlhveuqfxbpucorktost.supabase.co";
 
@@ -375,11 +395,20 @@
 
     let supabaseClient = null;
 
-    if (window.supabase &&
-        SUPABASE_PUBLISHABLE_KEY !== "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5") {
+    // FIX: Do not compare the real key with itself.
+    // Initialize Supabase when the SDK and key are available.
+    if (
+      window.supabase &&
+      typeof window.supabase.createClient === "function" &&
+      SUPABASE_PUBLISHABLE_KEY
+    ) {
       supabaseClient = window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_PUBLISHABLE_KEY
+      );
+    } else {
+      console.error(
+        "Supabase SDK failed to load. Check your internet connection."
       );
     }
 
@@ -488,10 +517,12 @@
 
       cart.splice(index, 1);
 
-      if (saveCart(cart)) displayCart();
+      if (saveCart(cart)) {
+        displayCart();
+      }
     }
 
-    // AUTH NAVIGATION
+    // LOGIN NAVIGATION
 
     function updateNavbar(session) {
       const loggedIn = Boolean(session && session.user);
@@ -504,49 +535,63 @@
 
     async function initialiseAuth() {
       if (!supabaseClient) {
-        console.error(
-          "Supabase is not configured. Check the publishable key."
-        );
         updateNavbar(null);
         return;
       }
 
-      const { data, error } = await supabaseClient.auth.getSession();
+      try {
+        const { data, error } =
+          await supabaseClient.auth.getSession();
 
-      if (error) {
-        console.error("Unable to read login session:", error.message);
-        updateNavbar(null);
-      } else {
+        if (error) {
+          console.error("Unable to read login session:", error.message);
+          updateNavbar(null);
+          return;
+        }
+
         updateNavbar(data.session);
-      }
 
-      supabaseClient.auth.onAuthStateChange(function(event, session) {
-        updateNavbar(session);
-      });
+        supabaseClient.auth.onAuthStateChange(
+          function(event, session) {
+            updateNavbar(session);
+          }
+        );
+      } catch (error) {
+        console.error("Authentication initialization failed:", error);
+        updateNavbar(null);
+      }
     }
 
+    // LOGOUT
     document.getElementById("logoutButton").addEventListener(
       "click",
       async function() {
         if (!supabaseClient) {
-          alert("Supabase is not configured.");
+          alert("Login service is unavailable. Please try again later.");
           return;
         }
 
         this.disabled = true;
         this.textContent = "Logging out...";
 
-        const { error } = await supabaseClient.auth.signOut();
+        try {
+          const { error } = await supabaseClient.auth.signOut();
 
-        if (error) {
-          console.error("Logout failed:", error.message);
-          alert("Logout failed: " + error.message);
+          if (error) {
+            console.error("Logout failed:", error.message);
+            alert("Logout failed: " + error.message);
+            this.disabled = false;
+            this.textContent = "Logout";
+            return;
+          }
+
+          window.location.replace("index.html");
+        } catch (error) {
+          console.error("Logout failed:", error);
+          alert("Unable to log out. Please try again.");
           this.disabled = false;
           this.textContent = "Logout";
-          return;
         }
-
-        window.location.replace("index.html");
       }
     );
 
@@ -560,34 +605,40 @@
         }
 
         if (!supabaseClient) {
-          alert("Login service is not configured. Please try again later.");
+          alert("Login service is unavailable. Please try again later.");
           return;
         }
 
-        const { data, error } =
-          await supabaseClient.auth.getSession();
+        try {
+          const { data, error } =
+            await supabaseClient.auth.getSession();
 
-        if (error || !data.session) {
-          alert("Please log in before checkout.");
-          window.location.href = "index.html";
-          return;
+          if (error || !data.session) {
+            alert("Please log in before checkout.");
+            window.location.href = "index.html";
+            return;
+          }
+
+          alert(
+            "You are logged in. Online order processing and payment have not been configured yet."
+          );
+        } catch (error) {
+          console.error("Checkout session check failed:", error);
+          alert("Unable to verify your login. Please try again.");
         }
-
-        alert(
-          "You are logged in. Online order processing and payment have not been configured yet."
-        );
       }
     );
 
-    // INITIALISE PAGE
+    // INITIALIZE PAGE
     displayCart();
     initialiseAuth();
 
     window.addEventListener("storage", function(event) {
-      if (event.key === "booknestCart") displayCart();
+      if (event.key === "booknestCart") {
+        displayCart();
+      }
     });
   </script>
 
 </body>
 </html>
-
