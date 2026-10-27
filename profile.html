@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile</title>
+  <link rel="stylesheet" href="profile.css">
+  <script type="module" src="profile.js"></script>
+</head>
+<body>
+  <main class="profile-container">
+    <header class="topbar">
+      <a href="index.html" class="back-link">← Home</a>
+      <button id="logoutBtn" class="logout-btn" type="button">
+        Logout
+      </button>
+    </header>
+
+    <section class="profile-card">
+      <div class="profile-heading">
+        <div class="avatar" id="avatar">U</div>
+        <h1>My Profile</h1>
+        <p>Manage your personal information</p>
+        <span id="emailDisplay" class="email"></span>
+      </div>
+
+      <form id="profileForm">
+        <label for="fullName">Full Name</label>
+        <input id="fullName" type="text"
+               maxlength="100" required>
+
+        <label for="phone">Phone Number</label>
+        <input id="phone" type="tel"
+               maxlength="20" placeholder="Enter phone number">
+
+        <label for="avatarUrl">Profile Photo URL</label>
+        <input id="avatarUrl" type="url"
+               maxlength="1000" placeholder="https://example.com/photo.jpg">
+
+        <button type="submit" id="saveBtn" class="save-btn">
+          Save Changes
+        </button>
+        <p id="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
