@@ -4,46 +4,739 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Profile</title>
-  <link rel="stylesheet" href="profile.css">
-  <script type="module" src="profile.js"></script>
+  <title>My Profile | BharathiBookNest</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --brown: #78432d;
+      --brown-dark: #542d1e;
+      --cream: #fff8ef;
+      --gold: #d8b48a;
+      --text: #30251f;
+      --muted: #78685d;
+      --border: #e6d7c7;
+      --white: #ffffff;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(255, 248, 239, 0.91),
+                        rgba(255, 248, 239, 0.95)),
+        url("./bharathiyar-background.png") center/cover fixed;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 15px 5%;
+      background: rgba(255, 248, 239, 0.97);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 3px 15px #30251f0b;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .brand h2 {
+      font-size: 21px;
+      color: var(--brown-dark);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .home-btn {
+      background: var(--white);
+      color: var(--brown);
+    }
+
+    .logout-btn {
+      background: var(--brown);
+      color: var(--white);
+      border-color: var(--brown);
+    }
+
+    .nav-btn:hover {
+      opacity: 0.85;
+    }
+
+    main {
+      width: min(100% - 30px, 720px);
+      margin: 45px auto;
+    }
+
+    .page-heading {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .page-heading h1 {
+      font-size: clamp(27px, 5vw, 36px);
+      color: var(--brown-dark);
+      margin-bottom: 10px;
+    }
+
+    .page-heading p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .profile-card {
+      overflow: hidden;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 12px 40px #542d1e12;
+    }
+
+    .profile-banner {
+      height: 115px;
+      background: linear-gradient(120deg, #542d1e, #a66a45);
+    }
+
+    .profile-intro {
+      text-align: center;
+      padding: 0 25px 25px;
+      margin-top: -58px;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 15px;
+    }
+
+    .avatar {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      border: 5px solid white;
+      background: #f1dfca;
+      color: var(--brown);
+      object-fit: cover;
+      display: block;
+      font-size: 35px;
+    }
+
+    .profile-intro h2 {
+      color: var(--brown-dark);
+      font-size: 24px;
+      overflow-wrap: anywhere;
+      margin-bottom: 7px;
+    }
+
+    .profile-intro p {
+      color: var(--muted);
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .account-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 30px;
+      background: #edf5ed;
+      color: #315b42;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .profile-form {
+      padding: 28px;
+      border-top: 1px solid #f0e6dc;
+    }
+
+    .section-heading {
+      font-size: 19px;
+      margin-bottom: 22px;
+      color: var(--brown-dark);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      display: block;
+      width: 100%;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      background: #fffdf9;
+      border: 1px solid #d9c8b7;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--brown);
+      box-shadow: 0 0 0 3px #78432d18;
+    }
+
+    .form-group input:disabled {
+      background: #f7f4f0;
+      color: #74675e;
+      cursor: not-allowed;
+    }
+
+    .help-text {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 7px;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+
+    .action-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 13px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .edit-btn {
+      color: var(--brown-dark);
+      background: #efe3d5;
+    }
+
+    .edit-btn:hover {
+      background: #e4d0bb;
+    }
+
+    .save-btn {
+      color: white;
+      background: var(--brown);
+    }
+
+    .save-btn:hover {
+      background: var(--brown-dark);
+    }
+
+    .cancel-btn {
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    .action-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .status {
+      min-height: 20px;
+      margin-top: 18px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 520px) {
+      header {
+        padding: 12px 15px;
+      }
+
+      .brand h2 {
+        font-size: 17px;
+      }
+
+      .brand img {
+        width: 40px;
+        height: 40px;
+      }
+
+      .nav-btn {
+        padding: 9px 11px;
+      }
+
+      main {
+        margin: 28px auto;
+      }
+
+      .profile-form {
+        padding: 22px 18px;
+      }
+
+      .profile-intro {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      .action-btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <main class="profile-container">
-    <header class="topbar">
-      <a href="index.html" class="back-link">← Home</a>
-      <button id="logoutBtn" class="logout-btn" type="button">
-        Logout
-      </button>
-    </header>
+
+  <header>
+    <div class="brand">
+      <img src="./booknest-logo.png" alt="BookNest Logo">
+      <h2>BharathiBookNest</h2>
+    </div>
+
+    <nav class="nav-actions">
+      <a href="index.html" class="nav-btn home-btn">← Home</a>
+      <button type="button" id="logoutBtn"
+              class="nav-btn logout-btn">Logout</button>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-heading">
+      <h1>My Profile</h1>
+      <p>Manage your personal information and account details.</p>
+    </div>
 
     <section class="profile-card">
-      <div class="profile-heading">
-        <div class="avatar" id="avatar">U</div>
-        <h1>My Profile</h1>
-        <p>Manage your personal information</p>
-        <span id="emailDisplay" class="email"></span>
+      <div class="profile-banner"></div>
+
+      <div class="profile-intro">
+        <div class="avatar-wrap">
+          <img
+            id="profilePhoto"
+            class="avatar"
+            src="https://placehold.co/200x200/f1dfca/78432d?text=User"
+            alt="Profile photo"
+          >
+        </div>
+
+        <h2 id="displayName">My Account</h2>
+        <p id="displayEmail">Loading account details...</p>
+        <span class="account-badge">Registered Member</span>
       </div>
 
-      <form id="profileForm">
-        <label for="fullName">Full Name</label>
-        <input id="fullName" type="text"
-               maxlength="100" required>
+      <form id="profileForm" class="profile-form">
+        <h3 class="section-heading">Personal Information</h3>
 
-        <label for="phone">Phone Number</label>
-        <input id="phone" type="tel"
-               maxlength="20" placeholder="Enter phone number">
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input
+            type="text"
+            id="fullName"
+            maxlength="100"
+            placeholder="Enter your full name"
+            required
+            disabled
+          >
+        </div>
 
-        <label for="avatarUrl">Profile Photo URL</label>
-        <input id="avatarUrl" type="url"
-               maxlength="1000" placeholder="https://example.com/photo.jpg">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            disabled
+          >
+          <small class="help-text">
+            Your registered email address is managed by your login account.
+          </small>
+        </div>
 
-        <button type="submit" id="saveBtn" class="save-btn">
-          Save Changes
-        </button>
-        <p id="status" role="status" aria-live="polite"></p>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input
+            type="tel"
+            id="phone"
+            maxlength="20"
+            placeholder="Enter your phone number"
+            disabled
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="avatarUrl">Profile Photo URL</label>
+          <input
+            type="url"
+            id="avatarUrl"
+            maxlength="1000"
+            placeholder="https://example.com/photo.jpg"
+            disabled
+          >
+          <small class="help-text">
+            Enter a publicly accessible image URL to preview your photo.
+          </small>
+        </div>
+
+        <div class="button-row">
+          <button
+            type="button"
+            id="editBtn"
+            class="action-btn edit-btn"
+          >
+            Edit Profile
+          </button>
+
+          <button
+            type="button"
+            id="cancelBtn"
+            class="action-btn cancel-btn"
+            hidden
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            id="saveBtn"
+            class="action-btn save-btn"
+            hidden
+          >
+            Save Changes
+          </button>
+        </div>
+
+        <p id="status" class="status" role="status"
+           aria-live="polite"></p>
       </form>
     </section>
   </main>
+
+  <footer>
+    © BharathiBookNest | Your Online Book Store
+  </footer>
+
+  <!-- Supabase library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    "use strict";
+
+    const SUPABASE_URL =
+      "https://mlhveuqfxbpucorktost.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_8ImFl6y1_2fsbQeAAFgFRg_RoCiGRy5";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const form = document.getElementById("profileForm");
+    const fullName = document.getElementById("fullName");
+    const email = document.getElementById("email");
+    const phone = document.getElementById("phone");
+    const avatarUrl = document.getElementById("avatarUrl");
+
+    const profilePhoto = document.getElementById("profilePhoto");
+    const displayName = document.getElementById("displayName");
+    const displayEmail = document.getElementById("displayEmail");
+    const status = document.getElementById("status");
+
+    const editBtn = document.getElementById("editBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const editableFields = [fullName, phone, avatarUrl];
+
+    let currentUser = null;
+    let originalValues = {};
+
+    function showStatus(message, isError = false) {
+      status.textContent = message;
+      status.style.color = isError ? "#b91c1c" : "#315b42";
+    }
+
+    function getInitial(name) {
+      return (name || "U").trim().charAt(0).toUpperCase() || "U";
+    }
+
+    function renderPhoto(url, name) {
+      profilePhoto.onerror = () => {
+        profilePhoto.onerror = null;
+        profilePhoto.src =
+          "https://placehold.co/200x200/f1dfca/78432d?text=User";
+        profilePhoto.alt = "Default profile photo";
+      };
+
+      if (url && /^https?:\/\//i.test(url)) {
+        profilePhoto.src = url;
+      } else {
+        profilePhoto.src =
+          "https://placehold.co/200x200/f1dfca/78432d?text=" +
+          encodeURIComponent(getInitial(name));
+      }
+    }
+
+    function updatePreview() {
+      displayName.textContent = fullName.value.trim() || "My Account";
+      renderPhoto(avatarUrl.value.trim(), fullName.value);
+    }
+
+    function getFormValues() {
+      return {
+        full_name: fullName.value.trim(),
+        phone: phone.value.trim(),
+        avatar_url: avatarUrl.value.trim()
+      };
+    }
+
+    function saveOriginalValues() {
+      originalValues = {
+        full_name: fullName.value,
+        phone: phone.value,
+        avatar_url: avatarUrl.value
+      };
+    }
+
+    function setEditing(isEditing) {
+      editableFields.forEach(field => {
+        field.disabled = !isEditing;
+      });
+
+      editBtn.hidden = isEditing;
+      cancelBtn.hidden = !isEditing;
+      saveBtn.hidden = !isEditing;
+    }
+
+    async function loadProfile(user) {
+      currentUser = user;
+
+      email.value = user.email || "";
+      displayEmail.textContent = user.email || "";
+
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("full_name, phone, avatar_url")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+
+      fullName.value =
+        data?.full_name ||
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        "";
+
+      phone.value = data?.phone || "";
+      avatarUrl.value = data?.avatar_url || "";
+
+      updatePreview();
+      saveOriginalValues();
+      setEditing(false);
+    }
+
+    async function initProfile() {
+      const { data, error } =
+        await supabaseClient.auth.getSession();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data.session) {
+        window.location.replace("index.html");
+        return;
+      }
+
+      await loadProfile(data.session.user);
+    }
+
+    editBtn.addEventListener("click", () => {
+      saveOriginalValues();
+      setEditing(true);
+      showStatus("");
+      fullName.focus();
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      fullName.value = originalValues.full_name;
+      phone.value = originalValues.phone;
+      avatarUrl.value = originalValues.avatar_url;
+
+      updatePreview();
+      setEditing(false);
+      showStatus("Changes cancelled.");
+    });
+
+    fullName.addEventListener("input", updatePreview);
+
+    avatarUrl.addEventListener("input", () => {
+      const url = avatarUrl.value.trim();
+
+      if (!url || /^https?:\/\//i.test(url)) {
+        updatePreview();
+      }
+    });
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (!currentUser) {
+        showStatus("Please log in again.", true);
+        return;
+      }
+
+      const values = getFormValues();
+
+      if (!values.full_name) {
+        showStatus("Please enter your full name.", true);
+        fullName.focus();
+        return;
+      }
+
+      if (values.avatar_url) {
+        try {
+          const parsedUrl = new URL(values.avatar_url);
+
+          if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+            throw new Error("Invalid URL");
+          }
+        } catch {
+          showStatus("Please enter a valid photo URL.", true);
+          return;
+        }
+      }
+
+      saveBtn.disabled = true;
+      cancelBtn.disabled = true;
+      showStatus("Saving your profile...");
+
+      try {
+        const { error } = await supabaseClient
+          .from("profiles")
+          .upsert({
+            user_id: currentUser.id,
+            full_name: values.full_name,
+            phone: values.phone,
+            avatar_url: values.avatar_url,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: "user_id"
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        updatePreview();
+        saveOriginalValues();
+        setEditing(false);
+        showStatus("Profile updated successfully!");
+
+      } catch (error) {
+        console.error("Profile save error:", error.message);
+        showStatus(
+          "Unable to save profile. Check your Supabase profiles table and RLS policies.",
+          true
+        );
+      } finally {
+        saveBtn.disabled = false;
+        cancelBtn.disabled = false;
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      logoutBtn.disabled = true;
+
+      try {
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) {
+          throw error;
+        }
+
+        window.location.replace("index.html");
+      } catch (error) {
+        console.error("Logout error:", error.message);
+        showStatus("Logout failed. Please try again.", true);
+        logoutBtn.disabled = false;
+      }
+    });
+
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || !session) {
+        window.location.replace("index.html");
+      }
+    });
+
+    initProfile().catch(error => {
+      console.error("Profile loading error:", error.message);
+      showStatus(
+        "Unable to load profile. Check your Supabase connection and profiles table.",
+        true
+      );
+    });
+  </script>
+
 </body>
 </html>
