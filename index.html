@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -372,7 +373,6 @@
         Login to your BharathiBookNest account.
       </p>
 
-      <!-- Login form -->
       <form id="loginForm">
         <div class="form-group">
           <label for="loginEmail">Email Address</label>
@@ -712,6 +712,12 @@
         updateNavbar(Boolean(session));
       }
     );
+
+    // NEW: Open Profile page when My Profile is clicked
+    profileLink.addEventListener("click", function(event) {
+      event.preventDefault();
+      window.location.href = "profile.html";
+    });
 
     // Logout
     logoutLink.addEventListener("click", async function(event) {
